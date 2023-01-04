@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:withes_webapp/UI/orderpage_1.dart';
+import 'package:withes_webapp/UI/orderpage_2.dart';
 import 'package:withes_webapp/Utility/config.dart';
 
 void main() {
@@ -43,7 +44,8 @@ class MyHomePage extends StatelessWidget {
           )
         ],
       ),
-      body: const OrderPage1(),
+      body: const OrderPage2(),
     );
   }
 }
+

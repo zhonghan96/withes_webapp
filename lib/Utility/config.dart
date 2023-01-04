@@ -26,8 +26,14 @@ class OrderData {
   static String address = '';
   static String lat = '';
   static String lang = '';
-  static List selectedDates = [];
+  static List selectedDates = [
+    DateTime.parse('2022-12-31'),
+    DateTime.parse('2023-01-12')
+  ];
+  static List selectedMeals = []; // seperate dropdown to meal specific
 }
+
+// Pricing: Meal cost X, delivery cost Y
 
 //                          _______ _
 //      /\                 |__   __| |
