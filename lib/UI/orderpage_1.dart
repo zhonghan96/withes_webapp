@@ -10,8 +10,94 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:withes_webapp/Utility/config.dart';
 
-class OrderPage1 extends StatelessWidget {
+class OrderPage1 extends StatefulWidget {
   const OrderPage1({super.key});
+
+  @override
+  State<OrderPage1> createState() => _OrderPage1State();
+}
+
+class _OrderPage1State extends State<OrderPage1> {
+  orderProgressIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Stack(children: [
+        const SizedBox(
+          height: 40,
+          child: Center(
+            child: LinearProgressIndicator(
+              value: 0.25,
+              color: Color(0xFF0a8ea0),
+              backgroundColor: Colors.grey,
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Column(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: const BoxDecoration(
+                      color: Color(0xFF0a8ea0), shape: BoxShape.circle),
+                  child: const Center(
+                    child: Text('1',
+                        style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text('Details'),
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey, width: 4),
+                      shape: BoxShape.circle),
+                  child: const Center(
+                    child: Text('2',
+                        style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text('Meals'),
+                )
+              ],
+            ),
+            Column(
+              children: [
+                Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.grey, width: 4),
+                      shape: BoxShape.circle),
+                  child: const Center(
+                    child: Text('3',
+                        style: TextStyle(fontSize: 16, color: Colors.grey)),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text('Payment'),
+                )
+              ],
+            )
+          ],
+        )
+      ]),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,57 +105,68 @@ class OrderPage1 extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
 
     buildWebView() {
-      return Scrollbar(
-          controller: scrollController,
-          thumbVisibility: true,
-          child: SingleChildScrollView(
-              controller: scrollController,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                      width: screenSize.width * 0.45,
-                      child: const CalendarWidget()),
-                  SizedBox(
-                      width: screenSize.width * 0.45,
-                      child: const CustomerDataFormWidget())
-                ],
-              )));
+      return Padding(
+        padding: const EdgeInsets.only(top: 5, bottom: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+                width: screenSize.width * 0.45, child: const CalendarWidget()),
+            const SizedBox(
+              width: 20,
+            ),
+            SizedBox(
+                width: screenSize.width * 0.45,
+                child: const CustomerDataFormWidget())
+          ],
+        ),
+      );
     }
 
     buildMobileView() {
-      return Scrollbar(
-          controller: scrollController,
-          thumbVisibility: true,
-          child: SingleChildScrollView(
-              controller: scrollController,
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                        width: screenSize.width * 0.8,
-                        child: const CalendarWidget()),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                        width: screenSize.width * 0.8,
-                        child: const CustomerDataFormWidget())
-                  ],
-                ),
-              )));
+      return Container(
+        width: screenSize.width * 0.95,
+        padding: const EdgeInsets.only(top: 5, bottom: 15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+                width: screenSize.width * 0.9, child: const CalendarWidget()),
+            const SizedBox(height: 20),
+            SizedBox(
+                width: screenSize.width * 0.9,
+                child: const CustomerDataFormWidget())
+          ],
+        ),
+      );
     }
 
-    return Container(
-      padding: const EdgeInsets.all(50),
-      child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-        if (constraints.maxWidth > 1000) {
-          return buildWebView();
-        } else {
-          return buildMobileView();
-        }
-      }),
+    return Column(
+      children: [
+        orderProgressIndicator(),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Scrollbar(
+            controller: scrollController,
+            thumbVisibility: true,
+            child: SizedBox(
+              height: screenSize.height - 170,
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  if (constraints.maxWidth > 1100) {
+                    return buildWebView();
+                  } else {
+                    return buildMobileView();
+                  }
+                }),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -564,8 +661,8 @@ class _AddressFieldState extends State<AddressField> {
               String placeId = place.placeId ?? '0';
               final detail = await pList.getDetailsByPlaceId(placeId);
               final geometry = detail.result.geometry!;
-              OrderData.lat = geometry.location.lat.toString();
-              OrderData.lang = geometry.location.lng.toString();
+              OrderData.lat = geometry.location.lat;
+              OrderData.lang = geometry.location.lng;
               addressCoord =
                   LatLng(geometry.location.lat, geometry.location.lng);
               _updateGMapsMarker();

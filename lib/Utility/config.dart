@@ -22,18 +22,26 @@ class OrderData {
   static String customerName = '';
   static String customerEmail = '';
   static String customerPhone = '';
-  static num numOfSets = 1;
   static String address = '';
-  static String lat = '';
-  static String lang = '';
-  static List selectedDates = [
-    DateTime.parse('2022-12-31'),
-    DateTime.parse('2023-01-12')
-  ];
+  static double lat = 0;
+  static double lang = 0;
+  static num numOfSets = 2;
+  static List selectedDates = [];
   static List selectedMeals = []; // seperate dropdown to meal specific
 }
 
-// Pricing: Meal cost X, delivery cost Y
+class MenuPrice {
+  // All prices are in AUD
+  static double deliveryFee = 5.00;
+  static Map chinese = {'dinner': 1.20, 'breakfast': 2.00, 'lunch': 3.00};
+  static Map indian = {'dinner': 4.00, 'breakfast': 5.00, 'lunch': 6.00};
+  static Map indonesian = {'dinner': 7.00, 'breakfast': 8.00, 'lunch': 9.00};
+  static double singleSetTotal = 0.00;
+  static double deliveryFeesTotal = 0.00;
+  static double subtotal = 0.00;
+  static double gst = 0.1;
+  static double finalTotal = 0.00;
+}
 
 //                          _______ _
 //      /\                 |__   __| |
@@ -57,7 +65,7 @@ ThemeData appTheme = ThemeData(
   brightness: Brightness.light,
   fontFamily: 'Lato',
   textTheme: const TextTheme(
-      headline5: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+      headline5: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
       headline6: TextStyle(fontSize: 20.0), //AppBar default textStyle
       subtitle1: TextStyle(fontSize: 16.0),
       subtitle2: TextStyle(fontSize: 14.0),
@@ -81,15 +89,6 @@ ThemeData appTheme = ThemeData(
 //                         |___/
 
 const esLogo = 'images/es_logo.png';
-
-//  _____      _      _
-//  |  __ \    (_)    (_)
-//  | |__) | __ _  ___ _ _ __   __ _
-//  |  ___/ '__| |/ __| | '_ \ / _` |
-//  | |   | |  | | (__| | | | | (_| |
-//  |_|   |_|  |_|\___|_|_| |_|\__, |
-//                              __/ |
-//                             |___/
 
 //    _____      _            _       _   _
 //   / ____|    | |          | |     | | (_)
