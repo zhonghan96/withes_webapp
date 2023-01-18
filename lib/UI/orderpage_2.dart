@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:withes_webapp/Utility/config.dart';
 import 'package:withes_webapp/Utility/gsheets_integration.dart';
 
+import 'package:withes_webapp/UI/paymentpage.dart';
+
 class OrderPage2 extends StatelessWidget {
   const OrderPage2({super.key});
 
@@ -897,9 +899,8 @@ class ConfirmButton extends StatelessWidget {
       onPressed: () {
         String dataCheckResult = _orderDataCheck();
         if (dataCheckResult.isEmpty) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Order clear')));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const PaymentPage()));
         } else {
           _errorDialog(context, dataCheckResult);
         }

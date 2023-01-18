@@ -97,6 +97,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.2"
   flutter_google_places:
     dependency: "direct main"
     description:
@@ -139,6 +146,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "7.0.0"
+  flutter_stripe_web:
+    dependency: "direct main"
+    description:
+      name: flutter_stripe_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.1.1"
   flutter_svg:
     dependency: transitive
     description:
@@ -248,7 +262,7 @@ packages:
     source: hosted
     version: "0.15.1"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
@@ -448,6 +462,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "7.0.0"
+  stripe_js:
+    dependency: transitive
+    description:
+      name: stripe_js
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   stripe_platform_interface:
     dependency: transitive
     description:

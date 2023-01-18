@@ -11,6 +11,10 @@ const kGoogleApiKey = 'AIzaSyCvJ2XC-qUS1s2vWvPplB3rKFQOZRY1MYI';
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
 final searchScaffoldKey = GlobalKey<ScaffoldState>();
 
+const stripePublishableKey =
+    'pk_test_51MR8NcAMpCRAwrCpPOiVNy2yREgBu5BbrptNRu5lJmMW75hEoLVLGgQhidSqt4Yg91xSZUPNgxxsJUxELrIO7HDK00rOHFg8lU';
+const stripeMerchantId = 'chua@withes.org';
+
 const deliveryDates = [
   1,
   2,

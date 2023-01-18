@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:withes_webapp/UI/orderpage_1.dart';
-import 'package:withes_webapp/UI/orderpage_2.dart';
-import 'package:withes_webapp/UI/paymentpage.dart';
 import 'package:withes_webapp/Utility/config.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  Stripe.publishableKey = stripePublishableKey;
+
+  await dotenv.load(fileName: 'assets/.env');
+
   runApp(const MyApp());
 }
 
@@ -45,8 +51,7 @@ class MyHomePage extends StatelessWidget {
           )
         ],
       ),
-      body: PaymentPage(),
+      body: OrderPage1(),
     );
   }
 }
-

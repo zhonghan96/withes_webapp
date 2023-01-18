@@ -8,6 +8,7 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:withes_webapp/UI/orderpage_2.dart';
 import 'package:withes_webapp/Utility/config.dart';
 
 class OrderPage1 extends StatefulWidget {
@@ -822,9 +823,8 @@ class ConfirmButton extends StatelessWidget {
       onPressed: () {
         String dataCheckResult = _orderDataCheck();
         if (dataCheckResult.isEmpty) {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Order clear')));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const OrderPage2()));
         } else {
           _errorDialog(context, dataCheckResult);
         }
