@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:withes_webapp/Utility/config.dart';
-import 'package:withes_webapp/Utility/gsheets_integration.dart';
-
+import 'package:withes_webapp/Utility/gsheets_service.dart';
 import 'package:withes_webapp/UI/paymentpage.dart';
 
 class OrderPage2 extends StatelessWidget {
@@ -131,31 +130,34 @@ class OrderPage2 extends StatelessWidget {
       );
     }
 
-    return Column(
-      children: [
-        orderProgressIndicator(),
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Scrollbar(
-            controller: scrollController,
-            thumbVisibility: true,
-            child: SizedBox(
-              height: screenSize.height - 170,
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: LayoutBuilder(builder:
-                    (BuildContext context, BoxConstraints constraints) {
-                  if (constraints.maxWidth > 1100) {
-                    return buildWebView();
-                  } else {
-                    return buildMobileView();
-                  }
-                }),
+    return Scaffold(
+      appBar: webappBar(context),
+      body: Column(
+        children: [
+          orderProgressIndicator(),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Scrollbar(
+              controller: scrollController,
+              thumbVisibility: true,
+              child: SizedBox(
+                height: screenSize.height - 170,
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: LayoutBuilder(builder:
+                      (BuildContext context, BoxConstraints constraints) {
+                    if (constraints.maxWidth > 1100) {
+                      return buildWebView();
+                    } else {
+                      return buildMobileView();
+                    }
+                  }),
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -857,13 +859,17 @@ class ConfirmButton extends StatelessWidget {
   const ConfirmButton({super.key});
 
   _orderDataCheck() {
+    String errorMessage = '';
+
     for (var i = 0; i < OrderData.selectedMeals.length; i++) {
       if (OrderData.selectedMeals[i]['dinner'] == '' ||
           OrderData.selectedMeals[i]['breakfast'] == '' ||
           OrderData.selectedMeals[i]['lunch'] == '') {
-        return 'Not all meals selected.\n If you don\'t need food for certain meals, please select "No food needed".';
+        errorMessage =
+            'Not all meals selected.\nIf you don\'t need food for certain meals, please select "No food needed".';
       }
     }
+    return errorMessage;
   }
 
   _errorDialog(BuildContext context, text) {

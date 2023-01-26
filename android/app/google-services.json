@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "477012757677",
+    "project_id": "fleet-goal-372106",
+    "storage_bucket": "fleet-goal-372106.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:477012757677:android:70d503ef053aedcdd48a24",
+        "android_client_info": {
+          "package_name": "com.example.withes_webapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "477012757677-42s7e3mhihde56lp3pvg1m5h8k531f4b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoOikpWBI5JyRAyY8tZPoObdEsaH4Sfo4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "477012757677-42s7e3mhihde56lp3pvg1m5h8k531f4b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "477012757677-qqn56lm29bguadoif3v73l03sfrovp2b.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.withesWebapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

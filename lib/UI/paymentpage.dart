@@ -1,11 +1,4 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:withes_webapp/Utility/config.dart';
 
@@ -101,11 +94,22 @@ class PaymentPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(width: screenSize.width * 0.45, child: Container()),
+            Column(
+              children: [
+                SizedBox(
+                    width: screenSize.width * 0.45,
+                    child: const CustomerInfo()),
+                const SizedBox(height: 20),
+                SizedBox(
+                    width: screenSize.width * 0.45,
+                    child: const OrderSummary()),
+              ],
+            ),
             const SizedBox(
               width: 20,
             ),
-            SizedBox(width: screenSize.width * 0.45, child: Container())
+            SizedBox(
+                width: screenSize.width * 0.45, child: const PaymentWidget())
           ],
         ),
       );
@@ -118,39 +122,47 @@ class PaymentPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: screenSize.width * 0.9, child: Container()),
+            SizedBox(
+                width: screenSize.width * 0.9, child: const CustomerInfo()),
             const SizedBox(height: 20),
-            SizedBox(width: screenSize.width * 0.9, child: Container())
+            SizedBox(
+                width: screenSize.width * 0.9, child: const OrderSummary()),
+            const SizedBox(height: 20),
+            SizedBox(
+                width: screenSize.width * 0.9, child: const PaymentWidget()),
           ],
         ),
       );
     }
 
-    return Column(
-      children: [
-        orderProgressIndicator(),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Scrollbar(
-            controller: scrollController,
-            thumbVisibility: true,
-            child: SizedBox(
-              height: screenSize.height - 170,
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: LayoutBuilder(builder:
-                    (BuildContext context, BoxConstraints constraints) {
-                  if (constraints.maxWidth > 1100) {
-                    return CustomerInfo();
-                  } else {
-                    return CustomerInfo();
-                  }
-                }),
+    return Scaffold(
+      appBar: webappBar(context),
+      body: Column(
+        children: [
+          orderProgressIndicator(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Scrollbar(
+              controller: scrollController,
+              thumbVisibility: true,
+              child: SizedBox(
+                height: screenSize.height - 170,
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: LayoutBuilder(builder:
+                      (BuildContext context, BoxConstraints constraints) {
+                    if (constraints.maxWidth > 1100) {
+                      return buildWebView();
+                    } else {
+                      return buildMobileView();
+                    }
+                  }),
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -238,7 +250,8 @@ class CustomerInfo extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: Text(OrderData.address,
+                      child: Text(
+                          '${OrderData.addLine1}\n${OrderData.addSuburb}\n${OrderData.addPostcode}, ${OrderData.addState}',
                           style: const TextStyle(fontSize: 18)),
                     )
                   ],
@@ -246,20 +259,6 @@ class CustomerInfo extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-            height: 200,
-            child: GoogleMap(
-              mapType: MapType.normal,
-              initialCameraPosition: CameraPosition(
-                  target: LatLng(OrderData.lat, OrderData.lang), zoom: 15),
-              markers: <Marker>{
-                Marker(
-                    markerId: const MarkerId('1'),
-                    position: LatLng(OrderData.lat, OrderData.lang))
-              },
-            ),
-          )
         ],
       ),
     );
@@ -310,15 +309,15 @@ parseMealPricing(String meal, String description) {
 selectedMealsDisplay(List selectedMeals) {
   List<Widget> listTileList = [];
 
-  for (var i = 0; i < selectedMeals[0].length; i++) {
-    var dinner = selectedMeals[0][i]['dinner'];
-    var breakfast = selectedMeals[0][i]['breakfast'];
-    var lunch = selectedMeals[0][i]['lunch'];
+  for (var i = 0; i < selectedMeals.length; i++) {
+    var dinner = selectedMeals[i]['dinner'];
+    var breakfast = selectedMeals[i]['breakfast'];
+    var lunch = selectedMeals[i]['lunch'];
 
     listTileList.add(Padding(
       padding: const EdgeInsets.only(left: 8.0),
       child: ListTile(
-        title: Text(selectedMeals[0][i]['date']),
+        title: Text(selectedMeals[i]['date']),
         subtitle: Padding(
             padding: const EdgeInsets.only(left: 8),
             child: Table(
@@ -409,7 +408,7 @@ class OrderSummary extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // selectedMealsDisplay(OrderData.selectedMeals),
+                selectedMealsDisplay(OrderData.selectedMeals),
                 const Divider(
                   thickness: 2,
                   indent: 20,
@@ -510,3 +509,42 @@ class OrderSummary extends StatelessWidget {
   }
 }
 
+class PaymentWidget extends StatelessWidget {
+  const PaymentWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(10)),
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 3,
+                blurRadius: 5,
+                offset: const Offset(4, 4))
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+                padding: const EdgeInsets.all(50),
+                child: const Text('Payment Information goes here')),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.all(15),
+                  elevation: 5,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(25)))),
+              child: const Text(
+                'Confirm Payment',
+                style: TextStyle(fontSize: 16),
+              ),
+              onPressed: () {},
+            )
+          ],
+        ));
+  }
+}

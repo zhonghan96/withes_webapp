@@ -3,10 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter_number_picker/flutter_number_picker.dart';
-import 'package:flutter_google_places_hoc081098/flutter_google_places_hoc081098.dart';
-import 'package:google_maps_webservice/places.dart';
-import 'package:google_api_headers/google_api_headers.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:withes_webapp/UI/orderpage_2.dart';
 import 'package:withes_webapp/Utility/config.dart';
@@ -482,7 +478,7 @@ class CustomerDataFormWidget extends StatelessWidget {
             padding: EdgeInsets.only(left: 25, right: 25, bottom: 22),
             child: EmailField(),
           ),
-          const Padding(
+          Container(
             padding: EdgeInsets.only(left: 25, right: 25, bottom: 15),
             child: AddressField(),
           ),
@@ -579,15 +575,6 @@ class _PhoneFieldState extends State<PhoneField> {
   }
 }
 
-//    _____ __  __
-//   / ____|  \/  |
-//  | |  __| \  / | __ _ _ __  ___
-//  | | |_ | |\/| |/ _` | '_ \/ __|
-//  | |__| | |  | | (_| | |_) \__ \
-//   \_____|_|  |_|\__,_| .__/|___/
-//                      | |
-//                      |_|
-
 class AddressField extends StatefulWidget {
   const AddressField({super.key});
 
@@ -596,89 +583,59 @@ class AddressField extends StatefulWidget {
 }
 
 class _AddressFieldState extends State<AddressField> {
-  final _controller = TextEditingController();
-
-  late GoogleMapController mapController;
-  LatLng addressCoord = const LatLng(-31.93044189148321, 115.86103545527742);
-  final CameraPosition _kGoogle = const CameraPosition(
-      target: LatLng(-31.93044189148321, 115.86103545527742), zoom: 10);
-
-  final List<Marker> _markers = <Marker>[];
-
-  void _updateGMapsMarker() {
-    setState(() {
-      _markers.clear();
-      _markers.add(Marker(
-          markerId: MarkerId(OrderData.address), position: addressCoord));
-    });
-  }
-
-  void _updateCameraPosition() {
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-      CameraPosition(target: addressCoord, zoom: 15),
-    ));
-    mapController.setMapStyle('[]');
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  String? dropdownvalue;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        TextField(
-          controller: _controller,
+        TextFormField(
           decoration: const InputDecoration(
             filled: true,
             icon: Icon(Icons.home),
-            hintText: 'Enter your shipping address',
-            labelText: 'Address',
+            labelText: 'Address Line 1',
           ),
-          onTap: () async {
-            var place = await PlacesAutocomplete.show(
-                context: context,
-                apiKey: kGoogleApiKey,
-                mode: Mode.overlay,
-                onError: (error) {
-                  print(error);
-                });
-            if (place != null) {
-              setState(() {
-                OrderData.address = place.description.toString();
-                _controller.text = OrderData.address;
-              });
-              final pList = GoogleMapsPlaces(
-                  apiKey: kGoogleApiKey,
-                  apiHeaders: await const GoogleApiHeaders().getHeaders());
-              String placeId = place.placeId ?? '0';
-              final detail = await pList.getDetailsByPlaceId(placeId);
-              final geometry = detail.result.geometry!;
-              OrderData.lat = geometry.location.lat;
-              OrderData.lang = geometry.location.lng;
-              addressCoord =
-                  LatLng(geometry.location.lat, geometry.location.lng);
-              _updateGMapsMarker();
-              _updateCameraPosition();
-            }
+          onChanged: (text) {
+            OrderData.addLine1 = text;
           },
         ),
-        Container(
-            padding: const EdgeInsets.only(top: 10),
-            height: 300,
-            child: GoogleMap(
-                mapType: MapType.normal,
-                onMapCreated: _onMapCreated,
-                initialCameraPosition: _kGoogle,
-                markers: Set<Marker>.of(_markers)))
+        Padding(
+          padding: const EdgeInsets.only(left: 40),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              filled: true,
+              labelText: 'Suburb',
+            ),
+            onChanged: (text) {
+              OrderData.addSuburb = text;
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 40),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              filled: true,
+              labelText: 'Postcode',
+            ),
+            onChanged: (text) {
+              OrderData.addPostcode = text;
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 40),
+          child: TextFormField(
+            decoration: const InputDecoration(
+              filled: true,
+              labelText: 'State',
+            ),
+            onChanged: (text) {
+              OrderData.addState = text;
+            },
+          ),
+        ),
       ],
     );
   }
@@ -779,7 +736,10 @@ class ConfirmButton extends StatelessWidget {
       errorMessage += 'Please input your contact number.\n';
     }
 
-    if (OrderData.address.isEmpty) {
+    if (OrderData.addLine1.isEmpty ||
+        OrderData.addSuburb.isEmpty ||
+        OrderData.addPostcode.isEmpty ||
+        OrderData.addState.isEmpty) {
       errorMessage += 'Please input your delivery address.\n';
     }
 

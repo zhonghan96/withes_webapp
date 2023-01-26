@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>477012757677-qqn56lm29bguadoif3v73l03sfrovp2b.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.477012757677-qqn56lm29bguadoif3v73l03sfrovp2b</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDONpWSoJdfZq5PgMQM-yR4h4Vc5CixNbY</string>
+	<key>GCM_SENDER_ID</key>
+	<string>477012757677</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.withesWebapp</string>
+	<key>PROJECT_ID</key>
+	<string>fleet-goal-372106</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fleet-goal-372106.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:477012757677:ios:038e89979ce904bed48a24</string>
+</dict>
+</plist>

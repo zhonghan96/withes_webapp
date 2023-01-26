@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'package:withes_webapp/UI/orderpage_1.dart';
 import 'package:withes_webapp/Utility/config.dart';
@@ -8,9 +8,7 @@ import 'package:withes_webapp/Utility/config.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  Stripe.publishableKey = stripePublishableKey;
-
-  await dotenv.load(fileName: 'assets/.env');
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
 }
@@ -51,7 +49,7 @@ class MyHomePage extends StatelessWidget {
           )
         ],
       ),
-      body: OrderPage1(),
+      body: const OrderPage1(),
     );
   }
 }

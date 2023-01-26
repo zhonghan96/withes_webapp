@@ -7,14 +7,6 @@ import 'package:flutter/material.dart';
 //  | |__| | | (_) | |_) | (_| | \__ \
 //   \_____|_|\___/|_.__/ \__,_|_|___/
 
-const kGoogleApiKey = 'AIzaSyCvJ2XC-qUS1s2vWvPplB3rKFQOZRY1MYI';
-final homeScaffoldKey = GlobalKey<ScaffoldState>();
-final searchScaffoldKey = GlobalKey<ScaffoldState>();
-
-const stripePublishableKey =
-    'pk_test_51MR8NcAMpCRAwrCpPOiVNy2yREgBu5BbrptNRu5lJmMW75hEoLVLGgQhidSqt4Yg91xSZUPNgxxsJUxELrIO7HDK00rOHFg8lU';
-const stripeMerchantId = 'chua@withes.org';
-
 const deliveryDates = [
   1,
   2,
@@ -26,10 +18,12 @@ class OrderData {
   static String customerName = '';
   static String customerEmail = '';
   static String customerPhone = '';
+  static String addLine1 = '';
+  static String addSuburb = '';
+  static String addPostcode = '';
+  static String addState = '';
   static String address = '';
-  static double lat = 0;
-  static double lang = 0;
-  static num numOfSets = 2;
+  static num numOfSets = 1;
   static List selectedDates = [];
   static List selectedMeals = []; // seperate dropdown to meal specific
 }
@@ -83,6 +77,31 @@ ThemeData appTheme = ThemeData(
   ),
 );
 
+webappBar(context) {
+  return AppBar(
+    title: const Text("Convenience Delivered"),
+    leading: IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    ),
+    leadingWidth: 45,
+    titleSpacing: 5,
+    actions: [
+      IconButton(
+        icon: const Icon(Icons.help),
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Redirect to FAQ or Help Ticket Submission'),
+          ));
+        },
+      )
+    ],
+  );
+}
+
 //   _____
 //  |_   _|
 //    | |  _ __ ___   __ _  __ _  ___  ___
@@ -93,10 +112,3 @@ ThemeData appTheme = ThemeData(
 //                         |___/
 
 const esLogo = 'images/es_logo.png';
-
-//    _____      _            _       _   _
-//   / ____|    | |          | |     | | (_)
-//  | |     __ _| | ___ _   _| | __ _| |_ _  ___  _ __
-//  | |    / _` | |/ __| | | | |/ _` | __| |/ _ \| '_ \
-//  | |___| (_| | | (__| |_| | | (_| | |_| | (_) | | | |
-//   \_____\__,_|_|\___|\__,_|_|\__,_|\__|_|\___/|_| |_|
