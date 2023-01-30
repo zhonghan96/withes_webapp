@@ -203,7 +203,7 @@ class CalendarWidget extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Which days would you like food delivered?",
-                  style: appTheme.textTheme.headline5,
+                  style: appTheme.textTheme.headlineSmall,
                 ),
               ),
               Container(
@@ -463,7 +463,7 @@ class CustomerDataFormWidget extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               "Please provide your information bellow",
-              style: appTheme.textTheme.headline5,
+              style: appTheme.textTheme.headlineSmall,
             ),
           ),
           const Padding(

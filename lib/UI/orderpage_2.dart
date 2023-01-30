@@ -318,7 +318,7 @@ class _MenuListState extends State<MenuList> {
             alignment: Alignment.centerLeft,
             child: Text(
               "Please select your meals bellow ",
-              style: appTheme.textTheme.headline5,
+              style: appTheme.textTheme.headlineSmall,
             ),
           ),
           SingleChildScrollView(

@@ -63,12 +63,12 @@ ThemeData appTheme = ThemeData(
   brightness: Brightness.light,
   fontFamily: 'Lato',
   textTheme: const TextTheme(
-      headline5: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-      headline6: TextStyle(fontSize: 20.0), //AppBar default textStyle
-      subtitle1: TextStyle(fontSize: 16.0),
-      subtitle2: TextStyle(fontSize: 14.0),
-      bodyText1: TextStyle(fontSize: 16.0),
-      bodyText2: TextStyle(fontSize: 14.0)),
+      headlineSmall: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
+      titleLarge: TextStyle(fontSize: 20.0), //AppBar default textStyle
+      titleMedium: TextStyle(fontSize: 16.0),
+      titleSmall: TextStyle(fontSize: 14.0),
+      bodyLarge: TextStyle(fontSize: 16.0),
+      bodyMedium: TextStyle(fontSize: 14.0)),
   colorScheme: const ColorScheme.light().copyWith(
     primary: primaryColor,
     primaryContainer: primaryColorLight,

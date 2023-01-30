@@ -201,7 +201,7 @@ class CustomerInfo extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               "Customer Information",
-              style: appTheme.textTheme.headline5,
+              style: appTheme.textTheme.headlineSmall,
             ),
           ),
           Padding(
@@ -400,7 +400,7 @@ class OrderSummary extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               "Order Summary",
-              style: appTheme.textTheme.headline5,
+              style: appTheme.textTheme.headlineSmall,
             ),
           ),
           Padding(
