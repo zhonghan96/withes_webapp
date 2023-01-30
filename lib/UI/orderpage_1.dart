@@ -6,6 +6,7 @@ import 'package:flutter_number_picker/flutter_number_picker.dart';
 
 import 'package:withes_webapp/UI/orderpage_2.dart';
 import 'package:withes_webapp/Utility/config.dart';
+import 'package:withes_webapp/Utility/gsheets_service.dart';
 
 class OrderPage1 extends StatefulWidget {
   const OrderPage1({super.key});
@@ -318,6 +319,7 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
+  List<dynamic> availableDates = [];
   final _weekdayLabelTextStyle = const TextStyle(
     color: Color(0xFF0a8ea0),
     fontWeight: FontWeight.w600,
@@ -326,6 +328,35 @@ class _DatePickerState extends State<DatePicker> {
       const TextStyle(color: Colors.black, fontWeight: FontWeight.w700);
   final _weekendTextStyle =
       const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600);
+
+  asyncInitState() async {
+    availableDates = [];
+    var allDates = await AvailableDatesManager().getAll();
+    List compiledDates = [];
+
+    for (var i = 0; i < allDates.length; i++) {
+      if (!availableDates.contains(allDates[i].date.toString())) {
+        availableDates.add(allDates[i].date.toString());
+      }
+    }
+    return availableDates;
+  }
+
+  Widget progressIndicator() {
+    return Padding(
+      padding: const EdgeInsets.all(20.0),
+      child: Center(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          CircularProgressIndicator(),
+          SizedBox(height: 20),
+          Text('Please wait while we load . . .',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))
+        ],
+      )),
+    );
+  }
 
   _dayTextStylePredicate(date) {
     TextStyle? textStyle;
@@ -348,8 +379,8 @@ class _DatePickerState extends State<DatePicker> {
 
   _selectableDayPredicate(DateTime date) {
     //Define days delivery is available
-    for (var i = 0; i < deliveryDates.length; i++) {
-      if (date.weekday == deliveryDates[i]) {
+    for (var i = 0; i < availableDates.length; i++) {
+      if (date.compareTo(DateTime.parse(availableDates[i])) == 0) {
         return true;
       }
     }
@@ -410,24 +441,31 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return CalendarDatePicker2WithActionButtons(
-      config: CalendarDatePicker2WithActionButtonsConfig(
-        firstDate: _firstDate(),
-        firstDayOfWeek: 0,
-        calendarType: CalendarDatePicker2Type.multi,
-        weekdayLabelTextStyle: _weekdayLabelTextStyle,
-        dayTextStyle: _dayTextStyle,
-        selectableDayPredicate: (date) => _selectableDayPredicate(date),
-        dayTextStylePredicate: ({required date}) =>
-            _dayTextStylePredicate(date),
-      ),
-      initialValue: const [],
-      onValueChanged: (value) => setState(() {
-        OrderData.selectedDates = value;
-        print(OrderData.selectedDates);
-        _dateConfirmationDialog(context);
-      }),
-    );
+    return FutureBuilder(
+        future: asyncInitState(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return CalendarDatePicker2WithActionButtons(
+              config: CalendarDatePicker2WithActionButtonsConfig(
+                firstDate: _firstDate(),
+                firstDayOfWeek: 0,
+                calendarType: CalendarDatePicker2Type.multi,
+                weekdayLabelTextStyle: _weekdayLabelTextStyle,
+                dayTextStyle: _dayTextStyle,
+                selectableDayPredicate: (date) => _selectableDayPredicate(date),
+                dayTextStylePredicate: ({required date}) =>
+                    _dayTextStylePredicate(date),
+              ),
+              initialValue: const [],
+              onValueChanged: (value) => setState(() {
+                OrderData.selectedDates = value;
+                _dateConfirmationDialog(context);
+              }),
+            );
+          } else {
+            return progressIndicator();
+          }
+        });
   }
 }
 
