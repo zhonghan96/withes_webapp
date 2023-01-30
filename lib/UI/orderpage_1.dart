@@ -25,7 +25,7 @@ class _OrderPage1State extends State<OrderPage1> {
           child: Center(
             child: LinearProgressIndicator(
               value: 0.25,
-              color: Color(0xFF0a8ea0),
+              color: Color(0xFF037FF3),
               backgroundColor: Colors.grey,
             ),
           ),
@@ -39,7 +39,7 @@ class _OrderPage1State extends State<OrderPage1> {
                   height: 40,
                   width: 40,
                   decoration: const BoxDecoration(
-                      color: Color(0xFF0a8ea0), shape: BoxShape.circle),
+                      color: Color(0xFF037FF3), shape: BoxShape.circle),
                   child: const Center(
                     child: Text('1',
                         style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -142,6 +142,7 @@ class _OrderPage1State extends State<OrderPage1> {
 
     return Column(
       children: [
+        const SizedBox(height: 10),
         orderProgressIndicator(),
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -321,7 +322,7 @@ class DatePicker extends StatefulWidget {
 class _DatePickerState extends State<DatePicker> {
   List<dynamic> availableDates = [];
   final _weekdayLabelTextStyle = const TextStyle(
-    color: Color(0xFF0a8ea0),
+    color: Color(0xFF037FF3),
     fontWeight: FontWeight.w600,
   );
   final _dayTextStyle =
@@ -332,7 +333,6 @@ class _DatePickerState extends State<DatePicker> {
   asyncInitState() async {
     availableDates = [];
     var allDates = await AvailableDatesManager().getAll();
-    List compiledDates = [];
 
     for (var i = 0; i < allDates.length; i++) {
       if (!availableDates.contains(allDates[i].date.toString())) {
@@ -352,7 +352,7 @@ class _DatePickerState extends State<DatePicker> {
           CircularProgressIndicator(),
           SizedBox(height: 20),
           Text('Please wait while we load . . .',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
         ],
       )),
     );

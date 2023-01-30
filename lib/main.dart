@@ -33,23 +33,22 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Convenience Delivered"),
-        leading: Image.asset(esLogo),
-        leadingWidth: 45,
-        titleSpacing: 5,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help),
-            onPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Redirect to FAQ or Help Ticket Submission'),
-              ));
-            },
-          )
-        ],
+        title: const Center(
+            child: Text(
+          "CONVENIENCE DELIVERED",
+          style: TextStyle(color: Color(0xFF012A51)),
+        )),
+        backgroundColor: const Color(0xFFFAFAFA),
+        elevation: 0,
       ),
       body: const OrderPage1(),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF037FF3),
+        child: const Icon(Icons.help, color: Colors.white),
+        onPressed: () {
+          helpDialog(context);
+        },
+      ),
     );
   }
 }

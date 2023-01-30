@@ -50,56 +50,59 @@ class MenuPrice {
 //           | |   | |
 //           |_|   |_|
 
-const primaryColor = Color(0xFF0a8ea0);
-const primaryColorLight = Color(0xFF56bed1);
-const primaryColorDark = Color(0xFF006071);
-const primaryFontColor = Color(0xFFffffff);
-const secondaryColor = Color(0xFFcaccd1);
-const secondaryColorLight = Color(0xFFfdffff);
-const secondaryColorDark = Color(0xFF999ba0);
-const secondaryFontColor = Color(0xFF000000);
+const primaryColor = Color(0xFF037FF3);
 
 ThemeData appTheme = ThemeData(
   brightness: Brightness.light,
-  fontFamily: 'Lato',
+  fontFamily: 'Montserrat',
   textTheme: const TextTheme(
-      headlineSmall: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold),
-      titleLarge: TextStyle(fontSize: 20.0), //AppBar default textStyle
+      headlineSmall: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
+      titleLarge: TextStyle(
+        fontSize: 40.0,
+        fontWeight: FontWeight.bold,
+      ), //AppBar default textStyle
       titleMedium: TextStyle(fontSize: 16.0),
       titleSmall: TextStyle(fontSize: 14.0),
       bodyLarge: TextStyle(fontSize: 16.0),
       bodyMedium: TextStyle(fontSize: 14.0)),
   colorScheme: const ColorScheme.light().copyWith(
     primary: primaryColor,
-    primaryContainer: primaryColorLight,
-    secondary: secondaryColor,
-    secondaryContainer: secondaryColorLight,
   ),
 );
 
 webappBar(context) {
   return AppBar(
-    title: const Text("Convenience Delivered"),
+    title: const Center(
+      child: Text("CONVENIENCE DELIVERED",
+          style: TextStyle(color: Color(0xFF012A51))),
+    ),
     leading: IconButton(
-      icon: const Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back, color: Color(0xFF012A51)),
       onPressed: () {
         Navigator.of(context).pop();
       },
     ),
-    leadingWidth: 45,
-    titleSpacing: 5,
-    actions: [
-      IconButton(
-        icon: const Icon(Icons.help),
-        onPressed: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Redirect to FAQ or Help Ticket Submission'),
-          ));
-        },
-      )
-    ],
+    backgroundColor: const Color(0xFFFAFAFA),
+    elevation: 0,
   );
+}
+
+helpDialog(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Having trouble ordering?'),
+          content: const Text(
+            'Instructions for customers having trouble',
+            style: TextStyle(height: 1.5),
+          ),
+          actions: [
+            TextButton(
+                onPressed: Navigator.of(context).pop, child: const Text('Cancel'))
+          ],
+        );
+      });
 }
 
 //   _____

@@ -60,7 +60,7 @@ class OrderPage2 extends StatelessWidget {
             child: Center(
               child: LinearProgressIndicator(
                 value: 0.5,
-                color: Color(0xFF0a8ea0),
+                color: Color(0xFF037FF3),
                 backgroundColor: Colors.grey,
               ),
             ),
@@ -74,7 +74,7 @@ class OrderPage2 extends StatelessWidget {
                     height: 40,
                     width: 40,
                     decoration: const BoxDecoration(
-                        color: Color(0xFF0a8ea0), shape: BoxShape.circle),
+                        color: Color(0xFF037FF3), shape: BoxShape.circle),
                     child: const Center(
                       child: Text('1',
                           style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -92,7 +92,7 @@ class OrderPage2 extends StatelessWidget {
                     height: 40,
                     width: 40,
                     decoration: const BoxDecoration(
-                        color: Color(0xFF0a8ea0), shape: BoxShape.circle),
+                        color: Color(0xFF037FF3), shape: BoxShape.circle),
                     child: const Center(
                       child: Text('2',
                           style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -134,6 +134,7 @@ class OrderPage2 extends StatelessWidget {
       appBar: webappBar(context),
       body: Column(
         children: [
+          const SizedBox(height: 10),
           orderProgressIndicator(),
           Padding(
             padding: const EdgeInsets.all(8),
@@ -157,6 +158,13 @@ class OrderPage2 extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF037FF3),
+        child: const Icon(Icons.help, color: Colors.white),
+        onPressed: () {
+          helpDialog(context);
+        },
       ),
     );
   }
@@ -334,24 +342,26 @@ class _MenuListState extends State<MenuList> {
                       return ListTile(
                           title: Text(
                         DateFormat.MMMMEEEEd().format(menu['date']),
-                        style: const TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 18),
                       ));
                     },
-                    body: Container(
-                      color: Colors.red,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Row(
+                    body: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
-                                  width: 100,
+                                  width: 120,
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10),
                                   child: const Text(
                                     'Dinner',
-                                    style: TextStyle(fontSize: 18),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
                                   )),
                               MealDropdown(
                                   foodDescriptionList:
@@ -361,16 +371,21 @@ class _MenuListState extends State<MenuList> {
                                   meal: 'dinner')
                             ],
                           ),
-                          Row(
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
-                                  width: 100,
+                                  width: 120,
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10),
                                   child: const Text(
                                     'Breakfast',
-                                    style: TextStyle(fontSize: 18),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
                                   )),
                               MealDropdown(
                                   foodDescriptionList:
@@ -380,16 +395,21 @@ class _MenuListState extends State<MenuList> {
                                   meal: 'breakfast')
                             ],
                           ),
-                          Row(
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Container(
-                                  width: 100,
+                                  width: 120,
                                   padding: const EdgeInsets.only(
                                       left: 10, right: 10),
                                   child: const Text(
                                     'Lunch',
-                                    style: TextStyle(fontSize: 18),
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600),
                                   )),
                               MealDropdown(
                                   foodDescriptionList:
@@ -399,8 +419,8 @@ class _MenuListState extends State<MenuList> {
                                   meal: 'lunch')
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     isExpanded: menu['isExpanded']);
               }).toList(),
@@ -501,7 +521,7 @@ class _MealDropdownState extends State<MealDropdown> {
             hint: const Text('Please select your meal of choice'),
             isExpanded: true,
             elevation: 16,
-            underline: const SizedBox(),
+            underline: Container(height: 1, color: const Color(0xFF012A51)),
             onChanged: (String? newValue) {
               setState(() {
                 updateOrderInfo(_selectedDate, _meal, newValue!);
@@ -561,7 +581,7 @@ class _OrderSummaryWidgetState extends State<OrderSummaryWidget> {
                 padding: EdgeInsets.only(top: 8, left: 8, bottom: 8),
                 child: Text(
                   'Order Summary',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600),
                 ),
               ),
             ),

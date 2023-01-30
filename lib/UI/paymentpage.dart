@@ -14,7 +14,7 @@ class PaymentPage extends StatelessWidget {
           child: Center(
             child: LinearProgressIndicator(
               value: 0.75,
-              color: Color(0xFF0a8ea0),
+              color: Color(0xFF037FF3),
               backgroundColor: Colors.grey,
             ),
           ),
@@ -28,7 +28,7 @@ class PaymentPage extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: const BoxDecoration(
-                      color: Color(0xFF0a8ea0), shape: BoxShape.circle),
+                      color: Color(0xFF037FF3), shape: BoxShape.circle),
                   child: const Center(
                     child: Text('1',
                         style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -46,7 +46,7 @@ class PaymentPage extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: const BoxDecoration(
-                      color: Color(0xFF0a8ea0), shape: BoxShape.circle),
+                      color: Color(0xFF037FF3), shape: BoxShape.circle),
                   child: const Center(
                     child: Text('2',
                         style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -64,7 +64,7 @@ class PaymentPage extends StatelessWidget {
                   height: 40,
                   width: 40,
                   decoration: const BoxDecoration(
-                      color: Color(0xFF0a8ea0), shape: BoxShape.circle),
+                      color: Color(0xFF037FF3), shape: BoxShape.circle),
                   child: const Center(
                     child: Text('3',
                         style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -139,6 +139,7 @@ class PaymentPage extends StatelessWidget {
       appBar: webappBar(context),
       body: Column(
         children: [
+          const SizedBox(height: 10),
           orderProgressIndicator(),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -162,6 +163,13 @@ class PaymentPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF037FF3),
+        child: const Icon(Icons.help, color: Colors.white),
+        onPressed: () {
+          helpDialog(context);
+        },
       ),
     );
   }
@@ -206,57 +214,62 @@ class CustomerInfo extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 5, left: 30, right: 30),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text('Name:', style: TextStyle(fontSize: 18))),
-                    Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Text('Email:', style: TextStyle(fontSize: 18)),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child:
-                          Text('Phone Number:', style: TextStyle(fontSize: 18)),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 8),
-                      child: Text('Address:', style: TextStyle(fontSize: 18)),
-                    ),
-                  ],
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
                       padding: const EdgeInsets.only(top: 8),
-                      child: Text(OrderData.customerName,
-                          style: const TextStyle(fontSize: 18)),
+                      child: Row(
+                        children: [
+                          const Text('Name: ',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600)),
+                          Text(OrderData.customerName,
+                              style: const TextStyle(fontSize: 16)),
+                        ],
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        const Text('Email: ',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(OrderData.customerEmail,
+                            style: const TextStyle(fontSize: 16)),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(OrderData.customerEmail,
-                          style: const TextStyle(fontSize: 18)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        const Text('Phone Number: ',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(OrderData.customerPhone,
+                            style: const TextStyle(fontSize: 16)),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(OrderData.customerPhone,
-                          style: const TextStyle(fontSize: 18)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        const Text('Address: ',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(
+                            '${OrderData.addLine1}, ${OrderData.addSuburb}, ${OrderData.addPostcode}, ${OrderData.addState}',
+                            style: const TextStyle(fontSize: 16)),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Text(
-                          '${OrderData.addLine1}\n${OrderData.addSuburb}\n${OrderData.addPostcode}, ${OrderData.addState}',
-                          style: const TextStyle(fontSize: 18)),
-                    )
-                  ],
-                )
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -396,7 +409,7 @@ class OrderSummary extends StatelessWidget {
         ),
         child: Column(children: [
           Container(
-            padding: const EdgeInsets.only(top: 12, left: 20),
+            padding: const EdgeInsets.only(top: 12, left: 20, bottom: 8),
             alignment: Alignment.centerLeft,
             child: Text(
               "Order Summary",
@@ -501,6 +514,9 @@ class OrderSummary extends StatelessWidget {
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold))
                   ],
+                ),
+                const SizedBox(
+                  height: 10,
                 )
               ],
             ),
