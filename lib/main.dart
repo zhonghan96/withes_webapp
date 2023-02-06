@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 import 'package:withes_webapp/UI/orderpage_1.dart';
+
 import 'package:withes_webapp/Utility/config.dart';
 
 void main() async {
@@ -34,9 +35,12 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-            child: Text(
-          "CONVENIENCE DELIVERED",
-          style: TextStyle(color: Color(0xFF012A51)),
+            child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            "CONVENIENCE DELIVERED",
+            style: TextStyle(color: Color(0xFF012A51)),
+          ),
         )),
         backgroundColor: const Color(0xFFFAFAFA),
         elevation: 0,

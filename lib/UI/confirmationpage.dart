@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:withes_webapp/Utility/config.dart';
 
-class PaymentPage extends StatelessWidget {
-  const PaymentPage({super.key});
+class ConfirmationPage extends StatelessWidget {
+  const ConfirmationPage({super.key});
 
   orderProgressIndicator() {
     return Padding(
@@ -268,6 +269,30 @@ class CustomerInfo extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        const Text('Dietary Restrictions: ',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(OrderData.dietaryReq.join(', '),
+                            style: const TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      children: [
+                        const Text('Meals: ',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w600)),
+                        Text(OrderData.meals.join(', '),
+                            style: const TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -278,106 +303,131 @@ class CustomerInfo extends StatelessWidget {
   }
 }
 
-parseMealPricing(String meal, String description) {
-  switch (meal) {
-    case 'dinner':
-      {
-        if (description.contains('Chinese')) {
-          return MenuPrice.chinese['dinner'];
-        } else if (description.contains('Indian')) {
-          return MenuPrice.indian['dinner'];
-        } else if (description.contains('Indonesian')) {
-          return MenuPrice.indonesian['dinner'];
-        } else {
-          return 0.00;
+parseMealPricing(selectedMealInfo) {
+  double outputPrice = 0.00;
+  int numOfMeals = 0;
+
+  if (!selectedMealInfo['dinner'].isEmpty &&
+      !selectedMealInfo['breakfast'].isEmpty &&
+      !selectedMealInfo['lunch'].isEmpty) {
+    if (selectedMealInfo['dinner'] != 'No food needed') {
+      numOfMeals += 1;
+    }
+    if (selectedMealInfo['breakfast'] != 'No food needed') {
+      numOfMeals += 1;
+    }
+    if (selectedMealInfo['lunch'] != 'No food needed') {
+      numOfMeals += 1;
+    }
+
+    switch (numOfMeals) {
+      case 1:
+        {
+          outputPrice = MenuPrice.setPrice['1'];
+          break;
         }
-      }
-    case 'breakfast':
-      {
-        if (description.contains('Chinese')) {
-          return MenuPrice.chinese['breakfast'];
-        } else if (description.contains('Indian')) {
-          return MenuPrice.indian['breakfast'];
-        } else if (description.contains('Indonesian')) {
-          return MenuPrice.indonesian['breakfast'];
-        } else {
-          return 0.00;
+      case 2:
+        {
+          outputPrice = MenuPrice.setPrice['2'];
+          break;
         }
-      }
-    case 'lunch':
-      {
-        if (description.contains('Chinese')) {
-          return MenuPrice.chinese['lunch'];
-        } else if (description.contains('Indian')) {
-          return MenuPrice.indian['lunch'];
-        } else if (description.contains('Indonesian')) {
-          return MenuPrice.indonesian['lunch'];
-        } else {
-          return 0.00;
+      case 3:
+        {
+          outputPrice = MenuPrice.setPrice['3'];
+          break;
         }
-      }
+    }
   }
+  return outputPrice;
 }
 
 selectedMealsDisplay(List selectedMeals) {
   List<Widget> listTileList = [];
 
-  for (var i = 0; i < selectedMeals.length; i++) {
-    var dinner = selectedMeals[i]['dinner'];
-    var breakfast = selectedMeals[i]['breakfast'];
-    var lunch = selectedMeals[i]['lunch'];
+  if (selectedMeals.isEmpty) {
+    for (var i = 0; i < OrderData.selectedDates.length; i++) {
+      double mealPrice = 0.00;
+      switch (OrderData.meals.length) {
+        case 1:
+          {
+            mealPrice += MenuPrice.setPrice['1'];
+            break;
+          }
+        case 2:
+          {
+            mealPrice += MenuPrice.setPrice['2'];
+            break;
+          }
+        case 3:
+          {
+            mealPrice += MenuPrice.setPrice['3'];
+            break;
+          }
+      }
 
-    listTileList.add(Padding(
-      padding: const EdgeInsets.only(left: 8.0),
-      child: ListTile(
-        title: Text(selectedMeals[i]['date']),
-        subtitle: Padding(
-            padding: const EdgeInsets.only(left: 8),
-            child: Table(
-              columnWidths: const {
-                0: FlexColumnWidth(),
-                1: IntrinsicColumnWidth()
-              },
-              defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-              children: [
-                TableRow(children: [
+      MenuPrice.singleSetTotal = mealPrice * OrderData.selectedDates.length;
+      MenuPrice.deliveryFeesTotal =
+          MenuPrice.deliveryFee * OrderData.selectedDates.length;
+      MenuPrice.subtotal = (MenuPrice.singleSetTotal * OrderData.numOfSets) +
+          MenuPrice.deliveryFeesTotal;
+      MenuPrice.finalTotal = MenuPrice.subtotal * (1 + MenuPrice.gst);
+
+      listTileList.add(Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: ListTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(DateFormat.MMMMd().format(OrderData.selectedDates[i])),
+              Text('\$${(mealPrice).toStringAsFixed(2)} AUD')
+            ],
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(left: 8, top: 5),
+            child: Text(OrderData.meals.join(', ')),
+          ),
+        ),
+      ));
+    }
+  } else {
+    for (var i = 0; i < selectedMeals.length; i++) {
+      var dinner = selectedMeals[i]['dinner'];
+      var breakfast = selectedMeals[i]['breakfast'];
+      var lunch = selectedMeals[i]['lunch'];
+
+      listTileList.add(Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: ListTile(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(selectedMeals[i]['date']),
+              Text(
+                  '\$${(parseMealPricing(selectedMeals[i])).toStringAsFixed(2)} AUD')
+            ],
+          ),
+          subtitle: Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
                     child: Text('Dinner: $dinner'),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
-                    child: Text('\$' +
-                        parseMealPricing('dinner', dinner).toStringAsFixed(2)),
-                  ),
-                ]),
-                TableRow(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
                     child: Text('Breakfast: $breakfast'),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 5),
-                    child: Text('\$' +
-                        parseMealPricing('breakfast', breakfast)
-                            .toStringAsFixed(2)),
-                  ),
-                ]),
-                TableRow(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
                     child: Text('Lunch: $lunch'),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Text('\$' +
-                        parseMealPricing('lunch', lunch).toStringAsFixed(2)),
-                  ),
-                ]),
-              ],
-            )),
-      ),
-    ));
+                ],
+              )),
+        ),
+      ));
+    }
   }
 
   return ConstrainedBox(
@@ -432,10 +482,7 @@ class OrderSummary extends StatelessWidget {
                   children: [
                     const Text('Cost of One Set: ',
                         style: TextStyle(fontSize: 14)),
-                    Text(
-                        '\$' +
-                            MenuPrice.singleSetTotal.toStringAsFixed(2) +
-                            ' AUD',
+                    Text('\$${MenuPrice.singleSetTotal.toStringAsFixed(2)} AUD',
                         style: const TextStyle(fontSize: 14))
                   ],
                 ),
@@ -459,9 +506,7 @@ class OrderSummary extends StatelessWidget {
                       const Text('Total Delivery Fees:',
                           style: TextStyle(fontSize: 14)),
                       Text(
-                          '\$' +
-                              MenuPrice.deliveryFeesTotal.toStringAsFixed(2) +
-                              ' AUD',
+                          '\$${MenuPrice.deliveryFeesTotal.toStringAsFixed(2)} AUD',
                           style: const TextStyle(fontSize: 14))
                     ],
                   ),
@@ -477,7 +522,7 @@ class OrderSummary extends StatelessWidget {
                     const Text('Subtotal: ',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
-                    Text('\$' + MenuPrice.subtotal.toStringAsFixed(2) + ' AUD',
+                    Text('\$${MenuPrice.subtotal.toStringAsFixed(2)} AUD',
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold))
                   ],
@@ -489,10 +534,7 @@ class OrderSummary extends StatelessWidget {
                     children: [
                       const Text('GST: ', style: TextStyle(fontSize: 16)),
                       Text(
-                          '\$' +
-                              (MenuPrice.subtotal * MenuPrice.gst)
-                                  .toStringAsFixed(2) +
-                              ' AUD',
+                          '\$${(MenuPrice.subtotal * MenuPrice.gst).toStringAsFixed(2)} AUD',
                           style: const TextStyle(fontSize: 16))
                     ],
                   ),
@@ -509,8 +551,7 @@ class OrderSummary extends StatelessWidget {
                     const Text('Total: ',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text(
-                        '\$' + MenuPrice.finalTotal.toStringAsFixed(2) + ' AUD',
+                    Text('\$${MenuPrice.finalTotal.toStringAsFixed(2)} AUD',
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold))
                   ],
@@ -546,8 +587,27 @@ class PaymentWidget extends StatelessWidget {
         child: Column(
           children: [
             Container(
-                padding: const EdgeInsets.all(50),
-                child: const Text('Payment Information goes here')),
+              padding: const EdgeInsets.only(top: 12, left: 20, bottom: 15),
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  "Any final notes for us about your order?",
+                  style: appTheme.textTheme.headlineSmall,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: TextField(
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(), hintText: 'Enter notes here'),
+                onChanged: (text) {
+                  OrderData.customerNotes = text;
+                },
+              ),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(15),
@@ -555,7 +615,7 @@ class PaymentWidget extends StatelessWidget {
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(25)))),
               child: const Text(
-                'Confirm Payment',
+                'Confirm Order',
                 style: TextStyle(fontSize: 16),
               ),
               onPressed: () {},

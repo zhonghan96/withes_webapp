@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter_number_picker/flutter_number_picker.dart';
 
-import 'package:withes_webapp/UI/orderpage_2.dart';
+import 'package:withes_webapp/UI/selectionpage.dart';
+
 import 'package:withes_webapp/Utility/config.dart';
 import 'package:withes_webapp/Utility/gsheets_service.dart';
 
@@ -87,10 +88,10 @@ class _OrderPage1State extends State<OrderPage1> {
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 5),
-                  child: Text('Payment'),
+                  child: Text('Confirmation'),
                 )
               ],
-            )
+            ),
           ],
         )
       ]),
@@ -197,26 +198,29 @@ class CalendarWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.only(top: 12, left: 20),
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Which days would you like food delivered?",
-                  style: appTheme.textTheme.headlineSmall,
-                ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(top: 12, left: 20),
+                    child: Text(
+                      "Which days would you like food delivered?",
+                      style: appTheme.textTheme.headlineSmall,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 12),
+                    child: Tooltip(
+                      message: 'Help',
+                      child: CalendarHelp(),
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                padding: const EdgeInsets.only(top: 12),
-                alignment: Alignment.centerRight,
-                child: const Tooltip(
-                  message: 'Help',
-                  child: CalendarHelp(),
-                ),
-              ),
-            ],
+            ),
           ),
           const DatePicker()
         ],
@@ -351,8 +355,10 @@ class _DatePickerState extends State<DatePicker> {
         children: const [
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text('Please wait while we load . . .',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+          Center(
+            child: Text('Please wait while we load . . .',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          )
         ],
       )),
     );
@@ -499,9 +505,12 @@ class CustomerDataFormWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.only(top: 12, left: 20, bottom: 15),
             alignment: Alignment.centerLeft,
-            child: Text(
-              "Please provide your information bellow",
-              style: appTheme.textTheme.headlineSmall,
+            child: FittedBox(
+              fit: BoxFit.fitWidth,
+              child: Text(
+                "Please provide your information bellow",
+                style: appTheme.textTheme.headlineSmall,
+              ),
             ),
           ),
           const Padding(
@@ -517,8 +526,16 @@ class CustomerDataFormWidget extends StatelessWidget {
             child: EmailField(),
           ),
           Container(
-            padding: EdgeInsets.only(left: 25, right: 25, bottom: 15),
-            child: AddressField(),
+            padding: const EdgeInsets.only(left: 25, right: 25, bottom: 15),
+            child: const AddressField(),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 25, right: 25, bottom: 22),
+            child: DietaryReqField(),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(left: 25, right: 25, bottom: 22),
+            child: SetMealsField(),
           ),
           const Padding(
             padding: EdgeInsets.only(left: 25, right: 25, bottom: 22),
@@ -604,9 +621,9 @@ class _PhoneFieldState extends State<PhoneField> {
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
       onChanged: (text) {
         if (text[0] == '0') {
-          OrderData.customerPhone = '+61' + text.substring(1);
+          OrderData.customerPhone = '+61${text.substring(1)}';
         } else {
-          OrderData.customerPhone = '+61' + text;
+          OrderData.customerPhone = '+61$text';
         }
       },
     );
@@ -679,38 +696,327 @@ class _AddressFieldState extends State<AddressField> {
   }
 }
 
+//   _____  _      _
+//  |  __ \(_)    | |
+//  | |  | |_  ___| |_ __ _ _ __ _   _
+//  | |  | | |/ _ \ __/ _` | '__| | | |
+//  | |__| | |  __/ || (_| | |  | |_| |
+//  |_____/|_|\___|\__\__,_|_|   \__, |
+//                                __/ |
+//                               |___/
+
+class DietaryReqField extends StatefulWidget {
+  const DietaryReqField({super.key});
+
+  @override
+  State<DietaryReqField> createState() => _DietaryReqFieldState();
+}
+
+class _DietaryReqFieldState extends State<DietaryReqField>
+    with RestorationMixin {
+  final RestorableBool isSelectedVegan = RestorableBool(false);
+  final RestorableBool isSelectedVegetarian = RestorableBool(false);
+  final RestorableBool isSelectedGlutenFree = RestorableBool(false);
+  final RestorableBool isSelectedDairyFree = RestorableBool(false);
+  final RestorableBool isSelectedNoPork = RestorableBool(false);
+  final RestorableBool isSelectedNoBeef = RestorableBool(false);
+
+  @override
+  String get restorationId => 'set_dietary_field';
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(isSelectedVegan, 'selected_vegan');
+    registerForRestoration(isSelectedVegetarian, 'selected_vegetarian');
+    registerForRestoration(isSelectedGlutenFree, 'selected_glutenfree');
+    registerForRestoration(isSelectedDairyFree, 'selected_dairyfree');
+    registerForRestoration(isSelectedNoPork, 'selected_nopork');
+    registerForRestoration(isSelectedNoBeef, 'selected_nobeef');
+  }
+
+  @override
+  void dispose() {
+    isSelectedVegan.dispose();
+    isSelectedVegetarian.dispose();
+    isSelectedGlutenFree.dispose();
+    isSelectedDairyFree.dispose();
+    isSelectedNoPork.dispose();
+    isSelectedNoBeef.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chips = [
+      Column(
+        children: [
+          Row(children: [
+            FilterChip(
+                label: const Text('Vegan'),
+                selected: isSelectedVegan.value,
+                labelStyle: const TextStyle(color: Colors.white),
+                checkmarkColor: Colors.white,
+                backgroundColor: Colors.black54,
+                selectedColor: const Color(0xFF037FF3),
+                onSelected: (value) {
+                  setState(() {
+                    isSelectedVegan.value = !isSelectedVegan.value;
+                    if (isSelectedVegan.value == false) {
+                      OrderData.dietaryReq.remove('Vegan');
+                    } else {
+                      OrderData.dietaryReq.add('Vegan');
+                    }
+                  });
+                }),
+            FilterChip(
+                label: const Text('Vegetarian'),
+                selected: isSelectedVegetarian.value,
+                labelStyle: const TextStyle(color: Colors.white),
+                checkmarkColor: Colors.white,
+                backgroundColor: Colors.black54,
+                selectedColor: const Color(0xFF037FF3),
+                onSelected: (value) {
+                  setState(() {
+                    isSelectedVegetarian.value = !isSelectedVegetarian.value;
+                    if (isSelectedVegetarian.value == false) {
+                      OrderData.dietaryReq.remove('Vegetarian');
+                    } else {
+                      OrderData.dietaryReq.add('Vegetarian');
+                    }
+                  });
+                }),
+            FilterChip(
+                label: const Text('Gluten-Free'),
+                selected: isSelectedGlutenFree.value,
+                labelStyle: const TextStyle(color: Colors.white),
+                checkmarkColor: Colors.white,
+                backgroundColor: Colors.black54,
+                selectedColor: const Color(0xFF037FF3),
+                onSelected: (value) {
+                  setState(() {
+                    isSelectedGlutenFree.value = !isSelectedGlutenFree.value;
+                    if (isSelectedGlutenFree.value == false) {
+                      OrderData.dietaryReq.remove('Gluten-free');
+                    } else {
+                      OrderData.dietaryReq.add('Gluten-free');
+                    }
+                  });
+                }),
+          ]),
+          const SizedBox(height: 5),
+          Row(
+            children: [
+              FilterChip(
+                  label: const Text('Dairy-Free'),
+                  selected: isSelectedDairyFree.value,
+                  labelStyle: const TextStyle(color: Colors.white),
+                  checkmarkColor: Colors.white,
+                  backgroundColor: Colors.black54,
+                  selectedColor: const Color(0xFF037FF3),
+                  onSelected: (value) {
+                    setState(() {
+                      isSelectedDairyFree.value = !isSelectedDairyFree.value;
+                      if (isSelectedDairyFree.value == false) {
+                        OrderData.dietaryReq.remove('Dairy-free');
+                      } else {
+                        OrderData.dietaryReq.add('Dairy-free');
+                      }
+                    });
+                  }),
+              FilterChip(
+                  label: const Text('No Pork'),
+                  selected: isSelectedNoPork.value,
+                  labelStyle: const TextStyle(color: Colors.white),
+                  checkmarkColor: Colors.white,
+                  backgroundColor: Colors.black54,
+                  selectedColor: const Color(0xFF037FF3),
+                  onSelected: (value) {
+                    setState(() {
+                      isSelectedNoPork.value = !isSelectedNoPork.value;
+                      if (isSelectedNoPork.value == false) {
+                        OrderData.dietaryReq.remove('No Pork');
+                      } else {
+                        OrderData.dietaryReq.add('No Pork');
+                      }
+                    });
+                  }),
+              FilterChip(
+                  label: const Text('No Beef'),
+                  selected: isSelectedNoBeef.value,
+                  labelStyle: const TextStyle(color: Colors.white),
+                  checkmarkColor: Colors.white,
+                  backgroundColor: Colors.black54,
+                  selectedColor: const Color(0xFF037FF3),
+                  onSelected: (value) {
+                    setState(() {
+                      isSelectedNoBeef.value = !isSelectedNoBeef.value;
+                      if (isSelectedNoBeef.value == false) {
+                        OrderData.dietaryReq.remove('No Beef');
+                      } else {
+                        OrderData.dietaryReq.add('No Beef');
+                      }
+                    });
+                  }),
+            ],
+          )
+        ],
+      )
+    ];
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Dietary\nRestrictions',
+                style: TextStyle(
+                  fontSize: 18,
+                )),
+            const SizedBox(width: 20),
+            Wrap(
+              children: [
+                for (final chip in chips)
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: chip,
+                  )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//    _____      _     __  __            _
+//   / ____|    | |   |  \/  |          | |
+//  | (___   ___| |_  | \  / | ___  __ _| |___
+//   \___ \ / _ \ __| | |\/| |/ _ \/ _` | / __|
+//   ____) |  __/ |_  | |  | |  __/ (_| | \__ \
+//  |_____/ \___|\__| |_|  |_|\___|\__,_|_|___/
+
+class SetMealsField extends StatefulWidget {
+  const SetMealsField({super.key});
+
+  @override
+  State<SetMealsField> createState() => _SetMealsFieldState();
+}
+
+class _SetMealsFieldState extends State<SetMealsField> with RestorationMixin {
+  final RestorableBool isSelectedBreakfast = RestorableBool(false);
+  final RestorableBool isSelectedLunch = RestorableBool(false);
+  final RestorableBool isSelectedDinner = RestorableBool(false);
+
+  @override
+  String get restorationId => 'set_meals_field';
+
+  @override
+  void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
+    registerForRestoration(isSelectedBreakfast, 'selected_breakfast');
+    registerForRestoration(isSelectedLunch, 'selected_lunch');
+    registerForRestoration(isSelectedDinner, 'selected_dinner');
+  }
+
+  @override
+  void dispose() {
+    isSelectedBreakfast.dispose();
+    isSelectedLunch.dispose();
+    isSelectedDinner.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chips = [
+      FilterChip(
+          label: const Text('Breakfast'),
+          selected: isSelectedBreakfast.value,
+          labelStyle: const TextStyle(color: Colors.white),
+          checkmarkColor: Colors.white,
+          backgroundColor: Colors.black54,
+          selectedColor: const Color(0xFF037FF3),
+          onSelected: (value) {
+            setState(() {
+              isSelectedBreakfast.value = !isSelectedBreakfast.value;
+              if (isSelectedBreakfast.value == false) {
+                OrderData.meals.remove('Breakfast');
+              } else {
+                OrderData.meals.add('Breakfast');
+              }
+            });
+          }),
+      FilterChip(
+          label: const Text('Lunch'),
+          selected: isSelectedLunch.value,
+          labelStyle: const TextStyle(color: Colors.white),
+          checkmarkColor: Colors.white,
+          backgroundColor: Colors.black54,
+          selectedColor: const Color(0xFF037FF3),
+          onSelected: (value) {
+            setState(() {
+              isSelectedLunch.value = !isSelectedLunch.value;
+              if (isSelectedLunch.value == false) {
+                OrderData.meals.remove('Lunch');
+              } else {
+                OrderData.meals.add('Lunch');
+              }
+            });
+          }),
+      FilterChip(
+          label: const Text('Dinner'),
+          selected: isSelectedDinner.value,
+          labelStyle: const TextStyle(color: Colors.white),
+          checkmarkColor: Colors.white,
+          backgroundColor: Colors.black54,
+          selectedColor: const Color(0xFF037FF3),
+          onSelected: (value) {
+            setState(() {
+              isSelectedDinner.value = !isSelectedDinner.value;
+              if (isSelectedDinner.value == false) {
+                OrderData.meals.remove('Dinner');
+              } else {
+                OrderData.meals.add('Dinner');
+              }
+            });
+          })
+    ];
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Meals',
+                style: TextStyle(
+                  fontSize: 18,
+                )),
+            const SizedBox(width: 20),
+            Wrap(
+              children: [
+                for (final chip in chips)
+                  Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: chip,
+                  )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 //    _____      _                                          _
 //   / ____|    | |       /\                               | |
 //  | (___   ___| |_     /  \   _ __ ___   ___  _   _ _ __ | |_
 //   \___ \ / _ \ __|   / /\ \ | '_ ` _ \ / _ \| | | | '_ \| __|
 //   ____) |  __/ |_   / ____ \| | | | | | (_) | |_| | | | | |_
 //  |_____/ \___|\__| /_/    \_\_| |_| |_|\___/ \__,_|_| |_|\__|
-
-class NumOfSetsWidget extends StatelessWidget {
-  const NumOfSetsWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(10)),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 3,
-              blurRadius: 5,
-              offset: const Offset(4, 4))
-        ],
-      ),
-      child: const Padding(
-        padding: EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 10),
-        child: NumOfSetsField(),
-      ),
-    );
-  }
-}
 
 class NumOfSetsField extends StatefulWidget {
   const NumOfSetsField({super.key});
@@ -723,12 +1029,10 @@ class _NumOfSetsFieldState extends State<NumOfSetsField> {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      const Text(
-        'Number of Sets',
-        style: TextStyle(
-          fontSize: 18,
-        ),
-      ),
+      const Text('Number of Sets',
+          style: TextStyle(
+            fontSize: 18,
+          )),
       CustomNumberPicker(
         initialValue: 1,
         maxValue: 100,
@@ -781,6 +1085,10 @@ class ConfirmButton extends StatelessWidget {
       errorMessage += 'Please input your delivery address.\n';
     }
 
+    if (OrderData.meals.isEmpty) {
+      errorMessage += 'Please select what meals you are looking for.\n';
+    }
+
     if (OrderData.selectedDates.isEmpty) {
       errorMessage += 'Please select the dates you want meals delivered.\n';
     }
@@ -822,7 +1130,7 @@ class ConfirmButton extends StatelessWidget {
         String dataCheckResult = _orderDataCheck();
         if (dataCheckResult.isEmpty) {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const OrderPage2()));
+              MaterialPageRoute(builder: (context) => const SelectionPage()));
         } else {
           _errorDialog(context, dataCheckResult);
         }

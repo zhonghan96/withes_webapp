@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 //   _____ _       _           _
@@ -23,9 +24,12 @@ class OrderData {
   static String addPostcode = '';
   static String addState = '';
   static String address = '';
+  static List dietaryReq = [];
+  static List meals = [];
   static num numOfSets = 1;
   static List selectedDates = [];
-  static List selectedMeals = []; // seperate dropdown to meal specific
+  static List selectedMeals = [];
+  static String customerNotes = '';
 }
 
 class MenuPrice {
@@ -34,6 +38,7 @@ class MenuPrice {
   static Map chinese = {'dinner': 1.20, 'breakfast': 2.00, 'lunch': 3.00};
   static Map indian = {'dinner': 4.00, 'breakfast': 5.00, 'lunch': 6.00};
   static Map indonesian = {'dinner': 7.00, 'breakfast': 8.00, 'lunch': 9.00};
+  static Map setPrice = {'1': 14.00, '2': 22.00, '3': 30.00};
   static double singleSetTotal = 0.00;
   static double deliveryFeesTotal = 0.00;
   static double subtotal = 0.00;
@@ -73,8 +78,11 @@ ThemeData appTheme = ThemeData(
 webappBar(context) {
   return AppBar(
     title: const Center(
-      child: Text("CONVENIENCE DELIVERED",
-          style: TextStyle(color: Color(0xFF012A51))),
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text("CONVENIENCE DELIVERED",
+            style: TextStyle(color: Color(0xFF012A51))),
+      ),
     ),
     leading: IconButton(
       icon: const Icon(Icons.arrow_back, color: Color(0xFF012A51)),
@@ -93,13 +101,25 @@ helpDialog(BuildContext context) {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Having trouble ordering?'),
-          content: const Text(
-            'Instructions for customers having trouble',
-            style: TextStyle(height: 1.5),
+          content: RichText(
+            text: TextSpan(children: [
+              const TextSpan(
+                  text:
+                      'Having issues with ordering online?\nLooking for something more tailored to what you are looking for?\n\nContact us at conveniencedelivered.es@gmail.com or send us your contact details ',
+                  style: TextStyle(height: 1.5)),
+              TextSpan(
+                  text: 'here',
+                  style: const TextStyle(height: 1.5, color: Colors.blue),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      print('tap');
+                    })
+            ]),
           ),
           actions: [
             TextButton(
-                onPressed: Navigator.of(context).pop, child: const Text('Cancel'))
+                onPressed: Navigator.of(context).pop,
+                child: const Text('Cancel'))
           ],
         );
       });

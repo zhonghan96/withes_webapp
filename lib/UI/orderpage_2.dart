@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:withes_webapp/UI/paymentpage.dart';
+import 'package:withes_webapp/UI/confirmationpage.dart';
 import 'package:withes_webapp/Utility/config.dart';
 import 'package:withes_webapp/Utility/gsheets_service.dart';
 
@@ -228,8 +228,10 @@ class _MenuSelectionWidgetState extends State<MenuSelectionWidget> {
         children: const [
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text('Loading your menu . . .',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold))
+          Center(
+            child: Text('Loading your menu . . .',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          )
         ],
       )),
     );
@@ -250,17 +252,86 @@ class _MenuSelectionWidgetState extends State<MenuSelectionWidget> {
               offset: const Offset(4, 4))
         ],
       ),
-      child: FutureBuilder(
-        future: asyncInitState(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return MenuList(menu: filteredMenu);
-          } else {
-            return progressIndicator();
-          }
-        },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(top: 12, left: 10, bottom: 10),
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Row(
+                  children: [
+                    Text(
+                      "Please select your meals bellow ",
+                      style: appTheme.textTheme.headlineSmall,
+                    ),
+                    const Tooltip(
+                      message: 'Help',
+                      child: MealSelectHelp(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            FutureBuilder(
+              future: asyncInitState(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  return MenuList(menu: filteredMenu);
+                } else {
+                  return progressIndicator();
+                }
+              },
+            ),
+          ],
+        ),
       ),
     );
+  }
+}
+
+class MealSelectHelp extends StatefulWidget {
+  const MealSelectHelp({super.key});
+
+  @override
+  State<MealSelectHelp> createState() => _MealSelectHelpState();
+}
+
+class _MealSelectHelpState extends State<MealSelectHelp> {
+  _helpDialog(BuildContext context) {
+    Widget okButton = TextButton(
+      onPressed: Navigator.of(context).pop,
+      child: const Text('OK'),
+    );
+
+    AlertDialog alert = AlertDialog(
+      content: const Text(
+        'Select your meals from the drop down of your selected dates\n\n'
+        'If you are looking for more customization,\nplease send us a ticket from the Help Button at the lower right corner',
+        style: TextStyle(height: 1.5),
+      ),
+      actions: [okButton],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        icon: const Icon(Icons.help),
+        onPressed: () {
+          setState(() {
+            _helpDialog(context);
+          });
+        });
   }
 }
 
@@ -317,116 +388,95 @@ class _MenuListState extends State<MenuList> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(top: 12, left: 10, bottom: 10),
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "Please select your meals bellow ",
-              style: appTheme.textTheme.headlineSmall,
-            ),
-          ),
-          SingleChildScrollView(
-            child: ExpansionPanelList(
-              expansionCallback: (int index, bool isExpanded) {
-                setState(() {
-                  _menu[index]['isExpanded'] = !isExpanded;
-                });
+    return SingleChildScrollView(
+      child: ExpansionPanelList(
+        expansionCallback: (int index, bool isExpanded) {
+          setState(() {
+            _menu[index]['isExpanded'] = !isExpanded;
+          });
+        },
+        children: _menu.map<ExpansionPanel>((menu) {
+          return ExpansionPanel(
+              headerBuilder: (BuildContext context, bool isExpanded) {
+                return ListTile(
+                    title: Text(
+                  DateFormat.MMMMEEEEd().format(menu['date']),
+                  style: const TextStyle(fontSize: 18),
+                ));
               },
-              children: _menu.map<ExpansionPanel>((menu) {
-                return ExpansionPanel(
-                    headerBuilder: (BuildContext context, bool isExpanded) {
-                      return ListTile(
-                          title: Text(
-                        DateFormat.MMMMEEEEd().format(menu['date']),
-                        style: const TextStyle(fontSize: 18),
-                      ));
-                    },
-                    body: Column(
+              body: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  width: 120,
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: const Text(
-                                    'Dinner',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  )),
-                              MealDropdown(
-                                  foodDescriptionList:
-                                      foodDescriptionParser(menu['dinner']),
-                                  selectedDate:
-                                      DateFormat.MMMMd().format(menu['date']),
-                                  meal: 'dinner')
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  width: 120,
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: const Text(
-                                    'Breakfast',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  )),
-                              MealDropdown(
-                                  foodDescriptionList:
-                                      foodDescriptionParser(menu['breakfast']),
-                                  selectedDate:
-                                      DateFormat.MMMMd().format(menu['date']),
-                                  meal: 'breakfast')
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Container(
-                                  width: 120,
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: const Text(
-                                    'Lunch',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600),
-                                  )),
-                              MealDropdown(
-                                  foodDescriptionList:
-                                      foodDescriptionParser(menu['lunch']),
-                                  selectedDate:
-                                      DateFormat.MMMMd().format(menu['date']),
-                                  meal: 'lunch')
-                            ],
-                          ),
-                        ),
+                        Container(
+                            width: 120,
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: const Text(
+                              'Dinner',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            )),
+                        MealDropdown(
+                            foodDescriptionList:
+                                foodDescriptionParser(menu['dinner']),
+                            selectedDate:
+                                DateFormat.MMMMd().format(menu['date']),
+                            meal: 'dinner')
                       ],
                     ),
-                    isExpanded: menu['isExpanded']);
-              }).toList(),
-            ),
-          ),
-        ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                            width: 120,
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: const Text(
+                              'Breakfast',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            )),
+                        MealDropdown(
+                            foodDescriptionList:
+                                foodDescriptionParser(menu['breakfast']),
+                            selectedDate:
+                                DateFormat.MMMMd().format(menu['date']),
+                            meal: 'breakfast')
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                            width: 120,
+                            padding: const EdgeInsets.only(left: 10, right: 10),
+                            child: const Text(
+                              'Lunch',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            )),
+                        MealDropdown(
+                            foodDescriptionList:
+                                foodDescriptionParser(menu['lunch']),
+                            selectedDate:
+                                DateFormat.MMMMd().format(menu['date']),
+                            meal: 'lunch')
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              isExpanded: menu['isExpanded']);
+        }).toList(),
       ),
     );
   }
@@ -455,18 +505,7 @@ updateSubtotal() {
   double priceOutput = 0.00;
 
   for (var i = 0; i < OrderData.selectedMeals.length; i++) {
-    if (OrderData.selectedMeals[i]['dinner'] != '') {
-      priceOutput +=
-          parseMealPricing('dinner', OrderData.selectedMeals[i]['dinner']);
-    }
-    if (OrderData.selectedMeals[i]['breakfast'] != '') {
-      priceOutput += parseMealPricing(
-          'breakfast', OrderData.selectedMeals[i]['breakfast']);
-    }
-    if (OrderData.selectedMeals[i]['lunch'] != '') {
-      priceOutput +=
-          parseMealPricing('lunch', OrderData.selectedMeals[i]['lunch']);
-    }
+    priceOutput += parseMealPricing(OrderData.selectedMeals[i]);
   }
 
   MenuPrice.singleSetTotal = priceOutput;
@@ -606,45 +645,42 @@ class _OrderSummaryWidgetState extends State<OrderSummaryWidget> {
   }
 }
 
-parseMealPricing(String meal, String description) {
-  switch (meal) {
-    case 'dinner':
-      {
-        if (description.contains('Chinese')) {
-          return MenuPrice.chinese['dinner'];
-        } else if (description.contains('Indian')) {
-          return MenuPrice.indian['dinner'];
-        } else if (description.contains('Indonesian')) {
-          return MenuPrice.indonesian['dinner'];
-        } else {
-          return 0.00;
+parseMealPricing(selectedMealInfo) {
+  double outputPrice = 0.00;
+  int numOfMeals = 0;
+
+  if (!selectedMealInfo['dinner'].isEmpty &&
+      !selectedMealInfo['breakfast'].isEmpty &&
+      !selectedMealInfo['lunch'].isEmpty) {
+    if (selectedMealInfo['dinner'] != 'No food needed') {
+      numOfMeals += 1;
+    }
+    if (selectedMealInfo['breakfast'] != 'No food needed') {
+      numOfMeals += 1;
+    }
+    if (selectedMealInfo['lunch'] != 'No food needed') {
+      numOfMeals += 1;
+    }
+
+    switch (numOfMeals) {
+      case 1:
+        {
+          outputPrice = MenuPrice.setPrice['1'];
+          break;
         }
-      }
-    case 'breakfast':
-      {
-        if (description.contains('Chinese')) {
-          return MenuPrice.chinese['breakfast'];
-        } else if (description.contains('Indian')) {
-          return MenuPrice.indian['breakfast'];
-        } else if (description.contains('Indonesian')) {
-          return MenuPrice.indonesian['breakfast'];
-        } else {
-          return 0.00;
+      case 2:
+        {
+          outputPrice = MenuPrice.setPrice['2'];
+          break;
         }
-      }
-    case 'lunch':
-      {
-        if (description.contains('Chinese')) {
-          return MenuPrice.chinese['lunch'];
-        } else if (description.contains('Indian')) {
-          return MenuPrice.indian['lunch'];
-        } else if (description.contains('Indonesian')) {
-          return MenuPrice.indonesian['lunch'];
-        } else {
-          return 0.00;
+      case 3:
+        {
+          outputPrice = MenuPrice.setPrice['3'];
+          break;
         }
-      }
+    }
   }
+  return outputPrice;
 }
 
 selectedMealsDisplay(List selectedMeals) {
@@ -659,51 +695,31 @@ selectedMealsDisplay(List selectedMeals) {
       listTileList.add(Padding(
         padding: const EdgeInsets.only(left: 8.0),
         child: ListTile(
-          title: Text(selectedMeals[0][i]['date']),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(selectedMeals[0][i]['date']),
+              Text(
+                  '\$${(parseMealPricing(selectedMeals[0][i])).toStringAsFixed(2)} AUD')
+            ],
+          ),
           subtitle: Padding(
               padding: const EdgeInsets.only(left: 8),
-              child: Table(
-                columnWidths: const {
-                  0: FlexColumnWidth(),
-                  1: IntrinsicColumnWidth()
-                },
-                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TableRow(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text('Dinner: $dinner'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text('\$' +
-                          parseMealPricing('dinner', dinner)
-                              .toStringAsFixed(2)),
-                    ),
-                  ]),
-                  TableRow(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text('Breakfast: $breakfast'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text('\$' +
-                          parseMealPricing('breakfast', breakfast)
-                              .toStringAsFixed(2)),
-                    ),
-                  ]),
-                  TableRow(children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text('Lunch: $lunch'),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 5),
-                      child: Text('\$' +
-                          parseMealPricing('lunch', lunch).toStringAsFixed(2)),
-                    ),
-                  ]),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text('Dinner: $dinner'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text('Breakfast: $breakfast'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Text('Lunch: $lunch'),
+                  ),
                 ],
               )),
         ),
@@ -714,47 +730,30 @@ selectedMealsDisplay(List selectedMeals) {
       listTileList.add(Padding(
           padding: const EdgeInsets.only(left: 8),
           child: ListTile(
-              title:
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   Text(DateFormat.MMMMd().format(OrderData.selectedDates[i])),
+                  const Text('\$0.00 AUD')
+                ],
+              ),
               subtitle: Padding(
                 padding: const EdgeInsets.only(left: 8),
-                child: Table(
-                  columnWidths: const {
-                    0: FlexColumnWidth(),
-                    1: IntrinsicColumnWidth()
-                  },
-                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: const [
-                    TableRow(children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('Dinner: '),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('\$0.00'),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('Breakfast: '),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('\$0.00'),
-                      ),
-                    ]),
-                    TableRow(children: [
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('Lunch: '),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 5),
-                        child: Text('\$0.00'),
-                      ),
-                    ]),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Text('Dinner:'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Text('Breakfast:'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Text('Lunch:'),
+                    ),
                   ],
                 ),
               ))));
@@ -788,7 +787,7 @@ pricingDisplay() {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text('Cost of One Set: ', style: TextStyle(fontSize: 14)),
-            Text('\$' + MenuPrice.singleSetTotal.toStringAsFixed(2) + ' AUD',
+            Text('\$${MenuPrice.singleSetTotal.toStringAsFixed(2)} AUD',
                 style: const TextStyle(fontSize: 14))
           ],
         ),
@@ -810,10 +809,7 @@ pricingDisplay() {
             children: [
               const Text('Total Delivery Fees:',
                   style: TextStyle(fontSize: 14)),
-              Text(
-                  '\$' +
-                      MenuPrice.deliveryFeesTotal.toStringAsFixed(2) +
-                      ' AUD',
+              Text('\$${MenuPrice.deliveryFeesTotal.toStringAsFixed(2)} AUD',
                   style: const TextStyle(fontSize: 14))
             ],
           ),
@@ -828,7 +824,7 @@ pricingDisplay() {
           children: [
             const Text('Subtotal: ',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            Text('\$' + MenuPrice.subtotal.toStringAsFixed(2) + ' AUD',
+            Text('\$${MenuPrice.subtotal.toStringAsFixed(2)} AUD',
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
           ],
@@ -840,9 +836,7 @@ pricingDisplay() {
             children: [
               const Text('GST: ', style: TextStyle(fontSize: 16)),
               Text(
-                  '\$' +
-                      (MenuPrice.subtotal * MenuPrice.gst).toStringAsFixed(2) +
-                      ' AUD',
+                  '\$${(MenuPrice.subtotal * MenuPrice.gst).toStringAsFixed(2)} AUD',
                   style: const TextStyle(fontSize: 16))
             ],
           ),
@@ -858,7 +852,7 @@ pricingDisplay() {
           children: [
             const Text('Total: ',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text('\$' + MenuPrice.finalTotal.toStringAsFixed(2) + ' AUD',
+            Text('\$${MenuPrice.finalTotal.toStringAsFixed(2)} AUD',
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
           ],
@@ -925,8 +919,10 @@ class ConfirmButton extends StatelessWidget {
       onPressed: () {
         String dataCheckResult = _orderDataCheck();
         if (dataCheckResult.isEmpty) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const PaymentPage()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ConfirmationPage()));
         } else {
           _errorDialog(context, dataCheckResult);
         }
