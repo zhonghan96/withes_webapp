@@ -45,3 +45,6 @@ app.*.map.json
 
 #Dotenv
 .env
+
+#API Keys, not to be pushed
+/lib/auth/secrets.dart
