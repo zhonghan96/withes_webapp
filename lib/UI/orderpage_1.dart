@@ -674,6 +674,7 @@ class _AddressFieldState extends State<AddressField> {
               filled: true,
               labelText: 'Postcode',
             ),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             onChanged: (text) {
               OrderData.addPostcode = text;
             },

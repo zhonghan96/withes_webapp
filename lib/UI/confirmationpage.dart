@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:withes_webapp/UI/submitorderloading.dart';
 import 'package:withes_webapp/Utility/config.dart';
+import 'package:withes_webapp/Utility/gsheets_service.dart';
 
 class ConfirmationPage extends StatelessWidget {
   const ConfirmationPage({super.key});
@@ -73,7 +75,7 @@ class ConfirmationPage extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 5),
-                  child: Text('Payment'),
+                  child: Text('Confirmation'),
                 )
               ],
             )
@@ -378,7 +380,7 @@ selectedMealsDisplay(List selectedMeals) {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(DateFormat.MMMMd().format(OrderData.selectedDates[i])),
+              Text(DateFormat.MMMMEEEEd().format(OrderData.selectedDates[i])),
               Text('\$${(mealPrice).toStringAsFixed(2)} AUD')
             ],
           ),
@@ -618,7 +620,12 @@ class PaymentWidget extends StatelessWidget {
                 'Confirm Order',
                 style: TextStyle(fontSize: 16),
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SubmitOrderLoadingPage()));
+              },
             )
           ],
         ));

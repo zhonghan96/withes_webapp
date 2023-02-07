@@ -79,7 +79,7 @@ class SelectionPage extends StatelessWidget {
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 5),
-                  child: Text('Payment'),
+                  child: Text('Confirmation'),
                 )
               ],
             )

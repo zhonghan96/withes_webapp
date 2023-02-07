@@ -120,7 +120,7 @@ class OrderPage2 extends StatelessWidget {
                   ),
                   const Padding(
                     padding: EdgeInsets.only(top: 5),
-                    child: Text('Payment'),
+                    child: Text('Confirmation'),
                   )
                 ],
               )
@@ -369,7 +369,7 @@ class _MenuListState extends State<MenuList> {
 
     for (var i = 0; i < OrderData.selectedDates.length; i++) {
       Map<String, String> orderInfo = {
-        'date': DateFormat.MMMMd().format(OrderData.selectedDates[i]),
+        'date': DateFormat.MMMMEEEEd().format(OrderData.selectedDates[i]),
         'dinner': '',
         'breakfast': '',
         'lunch': ''
@@ -424,7 +424,7 @@ class _MenuListState extends State<MenuList> {
                             foodDescriptionList:
                                 foodDescriptionParser(menu['dinner']),
                             selectedDate:
-                                DateFormat.MMMMd().format(menu['date']),
+                                DateFormat.MMMMEEEEd().format(menu['date']),
                             meal: 'dinner')
                       ],
                     ),
@@ -446,7 +446,7 @@ class _MenuListState extends State<MenuList> {
                             foodDescriptionList:
                                 foodDescriptionParser(menu['breakfast']),
                             selectedDate:
-                                DateFormat.MMMMd().format(menu['date']),
+                                DateFormat.MMMMEEEEd().format(menu['date']),
                             meal: 'breakfast')
                       ],
                     ),
@@ -468,7 +468,7 @@ class _MenuListState extends State<MenuList> {
                             foodDescriptionList:
                                 foodDescriptionParser(menu['lunch']),
                             selectedDate:
-                                DateFormat.MMMMd().format(menu['date']),
+                                DateFormat.MMMMEEEEd().format(menu['date']),
                             meal: 'lunch')
                       ],
                     ),
@@ -733,7 +733,8 @@ selectedMealsDisplay(List selectedMeals) {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(DateFormat.MMMMd().format(OrderData.selectedDates[i])),
+                  Text(DateFormat.MMMMEEEEd()
+                      .format(OrderData.selectedDates[i])),
                   const Text('\$0.00 AUD')
                 ],
               ),

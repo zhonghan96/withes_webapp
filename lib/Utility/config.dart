@@ -16,6 +16,7 @@ const deliveryDates = [
 ]; // Defines the days we deliver, with Sunday = 0 and Saturday = 6
 
 class OrderData {
+  static String id = UniqueKey().toString();
   static String customerName = '';
   static String customerEmail = '';
   static String customerPhone = '';
@@ -23,7 +24,6 @@ class OrderData {
   static String addSuburb = '';
   static String addPostcode = '';
   static String addState = '';
-  static String address = '';
   static List dietaryReq = [];
   static List meals = [];
   static num numOfSets = 1;
@@ -35,9 +35,6 @@ class OrderData {
 class MenuPrice {
   // All prices are in AUD
   static double deliveryFee = 5.00;
-  static Map chinese = {'dinner': 1.20, 'breakfast': 2.00, 'lunch': 3.00};
-  static Map indian = {'dinner': 4.00, 'breakfast': 5.00, 'lunch': 6.00};
-  static Map indonesian = {'dinner': 7.00, 'breakfast': 8.00, 'lunch': 9.00};
   static Map setPrice = {'1': 14.00, '2': 22.00, '3': 30.00};
   static double singleSetTotal = 0.00;
   static double deliveryFeesTotal = 0.00;
@@ -89,6 +86,20 @@ webappBar(context) {
       onPressed: () {
         Navigator.of(context).pop();
       },
+    ),
+    backgroundColor: const Color(0xFFFAFAFA),
+    elevation: 0,
+  );
+}
+
+confirmOrderWebappBar(context) {
+  return AppBar(
+    title: const Center(
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text("CONVENIENCE DELIVERED",
+            style: TextStyle(color: Color(0xFF012A51))),
+      ),
     ),
     backgroundColor: const Color(0xFFFAFAFA),
     elevation: 0,
