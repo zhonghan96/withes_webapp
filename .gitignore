@@ -47,4 +47,4 @@ app.*.map.json
 .env
 
 #API Keys, not to be pushed
-/lib/auth/secrets.dart
+/functions/serviceAccount.json

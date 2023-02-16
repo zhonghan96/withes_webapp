@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:withes_webapp/UI/submitordersuccess.dart';
 import 'package:withes_webapp/UI/submitorderfail.dart';
 import 'package:withes_webapp/Utility/config.dart';
-import 'package:withes_webapp/Utility/gsheets_service.dart';
 
 class SubmitOrderLoadingPage extends StatelessWidget {
   const SubmitOrderLoadingPage({super.key});
@@ -86,7 +87,7 @@ class SubmitOrderLoadingPage extends StatelessWidget {
   }
 
   Future<void> executeAfterBuild(context) async {
-    bool submitOrder = await OrderDetailsManager().placeOrder();
+    bool submitOrder = await addToFireStore();
     Future.delayed(const Duration(seconds: 3), () {
       if (submitOrder) {
         Navigator.push(context,
@@ -96,6 +97,34 @@ class SubmitOrderLoadingPage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const OrderFailPage()));
       }
     });
+  }
+
+  Future<bool> addToFireStore() async {
+    final db = FirebaseFirestore.instance;
+    db.collection("orders").doc(OrderData.id).set({
+      "orderId": OrderData.id,
+      "finalTotal": MenuPrice.finalTotal.toStringAsFixed(2),
+      "notes": OrderData.customerNotes,
+      "customerInformation": {
+        "name": OrderData.customerName,
+        "email": OrderData.customerEmail,
+        "phone": OrderData.customerPhone,
+        "dietaryRequirements": OrderData.dietaryReq.toString(),
+        "address": {
+          "line1": OrderData.addLine1,
+          "suburb": OrderData.addSuburb,
+          "postcode": OrderData.addPostcode,
+          "state": OrderData.addState
+        }
+      },
+      "orderInformation": {
+        "mealsWanted": OrderData.meals.toString(),
+        "numberOfSets": OrderData.numOfSets,
+        "selectedDates": OrderData.selectedDates.toString(),
+        "selectedMeals": OrderData.selectedMeals.toString()
+      }
+    });
+    return true;
   }
 
   @override

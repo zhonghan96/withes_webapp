@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:withes_webapp/UI/confirmationpage.dart';
 import 'package:withes_webapp/Utility/config.dart';
-import 'package:withes_webapp/Utility/gsheets_service.dart';
 
 class OrderPage2 extends StatelessWidget {
   const OrderPage2({super.key});
@@ -215,8 +215,29 @@ class _MenuSelectionWidgetState extends State<MenuSelectionWidget> {
   List<dynamic> filteredMenu = [];
 
   asyncInitState() async {
-    return filteredMenu =
-        await MenuItemManager().filterMenu(OrderData.selectedDates);
+    return filteredMenu = await getFilteredMenu();
+  }
+
+  getFilteredMenu() async {
+    List output = [];
+
+    final db = FirebaseFirestore.instance;
+    await db.collection('menu').get().then((snapshot) {
+      for (var i in OrderData.selectedDates) {
+        for (var j in snapshot.docs) {
+          if (i == j.data()['date'].toDate()) {
+            output.add({
+              'date': j.data()['date'].toDate(),
+              'dinner': j.data()['dinner'],
+              'breakfast': j.data()['breakfast'],
+              'lunch': j.data()['lunch'],
+              'isExpanded': false
+            });
+          }
+        }
+      }
+    });
+    return output;
   }
 
   Widget progressIndicator() {
@@ -352,7 +373,8 @@ class _MenuListState extends State<MenuList> {
     List<String> appendList = [];
 
     for (var i = 0; i < rawList.length; i++) {
-      appendList.add(rawList[i].cusine + ' - ' + rawList[i].foodDescription);
+      appendList
+          .add(rawList[i]['cusine'] + ' - ' + rawList[i]['foodDescription']);
     }
 
     appendList.sort();

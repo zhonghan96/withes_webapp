@@ -44,40 +44,39 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCvJ2XC-qUS1s2vWvPplB3rKFQOZRY1MYI',
-    appId: '1:477012757677:web:14fca0443a3b3270d48a24',
-    messagingSenderId: '477012757677',
-    projectId: 'fleet-goal-372106',
-    authDomain: 'fleet-goal-372106.firebaseapp.com',
-    storageBucket: 'fleet-goal-372106.appspot.com',
-    measurementId: 'G-F13LRQ113M',
+    apiKey: 'AIzaSyAlXsOdH-AkzhxQ3V1c_wzhNQQS7fFk2aI',
+    appId: '1:800751398617:web:95e7015300b02ccdc158c8',
+    messagingSenderId: '800751398617',
+    projectId: 'convenience-delivered-app',
+    authDomain: 'convenience-delivered-app.firebaseapp.com',
+    storageBucket: 'convenience-delivered-app.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCoOikpWBI5JyRAyY8tZPoObdEsaH4Sfo4',
-    appId: '1:477012757677:android:70d503ef053aedcdd48a24',
-    messagingSenderId: '477012757677',
-    projectId: 'fleet-goal-372106',
-    storageBucket: 'fleet-goal-372106.appspot.com',
+    apiKey: 'AIzaSyChXrTis03IkoQQQkI-8IsHYJ_43LjjmyU',
+    appId: '1:800751398617:android:3a7273a7d8607cfec158c8',
+    messagingSenderId: '800751398617',
+    projectId: 'convenience-delivered-app',
+    storageBucket: 'convenience-delivered-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDONpWSoJdfZq5PgMQM-yR4h4Vc5CixNbY',
-    appId: '1:477012757677:ios:038e89979ce904bed48a24',
-    messagingSenderId: '477012757677',
-    projectId: 'fleet-goal-372106',
-    storageBucket: 'fleet-goal-372106.appspot.com',
-    iosClientId: '477012757677-qqn56lm29bguadoif3v73l03sfrovp2b.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBPiZnMUpc-2DUExFJh63rB7JmEznQ2guk',
+    appId: '1:800751398617:ios:1518e2ad89bc9688c158c8',
+    messagingSenderId: '800751398617',
+    projectId: 'convenience-delivered-app',
+    storageBucket: 'convenience-delivered-app.appspot.com',
+    iosClientId: '800751398617-26aberhrg419gk4kc0tmukuchq218hm6.apps.googleusercontent.com',
     iosBundleId: 'com.example.withesWebapp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDONpWSoJdfZq5PgMQM-yR4h4Vc5CixNbY',
-    appId: '1:477012757677:ios:038e89979ce904bed48a24',
-    messagingSenderId: '477012757677',
-    projectId: 'fleet-goal-372106',
-    storageBucket: 'fleet-goal-372106.appspot.com',
-    iosClientId: '477012757677-qqn56lm29bguadoif3v73l03sfrovp2b.apps.googleusercontent.com',
+    apiKey: 'AIzaSyBPiZnMUpc-2DUExFJh63rB7JmEznQ2guk',
+    appId: '1:800751398617:ios:1518e2ad89bc9688c158c8',
+    messagingSenderId: '800751398617',
+    projectId: 'convenience-delivered-app',
+    storageBucket: 'convenience-delivered-app.appspot.com',
+    iosClientId: '800751398617-26aberhrg419gk4kc0tmukuchq218hm6.apps.googleusercontent.com',
     iosBundleId: 'com.example.withesWebapp',
   );
 }

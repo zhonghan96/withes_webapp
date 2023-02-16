@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter_number_picker/flutter_number_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:withes_webapp/UI/selectionpage.dart';
 
 import 'package:withes_webapp/Utility/config.dart';
-import 'package:withes_webapp/Utility/gsheets_service.dart';
 
 class OrderPage1 extends StatefulWidget {
   const OrderPage1({super.key});
@@ -336,13 +336,12 @@ class _DatePickerState extends State<DatePicker> {
 
   asyncInitState() async {
     availableDates = [];
-    var allDates = await AvailableDatesManager().getAll();
 
-    for (var i = 0; i < allDates.length; i++) {
-      if (!availableDates.contains(allDates[i].date.toString())) {
-        availableDates.add(allDates[i].date.toString());
+    await FirebaseFirestore.instance.collection("menu").get().then((snapshot) {
+      for (var i in snapshot.docs) {
+        availableDates.add(i.data()["date"].toDate());
       }
-    }
+    });
     return availableDates;
   }
 
@@ -386,7 +385,7 @@ class _DatePickerState extends State<DatePicker> {
   _selectableDayPredicate(DateTime date) {
     //Define days delivery is available
     for (var i = 0; i < availableDates.length; i++) {
-      if (date.compareTo(DateTime.parse(availableDates[i])) == 0) {
+      if (date.compareTo(availableDates[i]) == 0) {
         return true;
       }
     }
