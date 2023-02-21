@@ -100,8 +100,8 @@ class SubmitOrderLoadingPage extends StatelessWidget {
   }
 
   Future<bool> addToFireStore() async {
-    final db = FirebaseFirestore.instance;
-    db.collection("orders").doc(OrderData.id).set({
+    bool output = false;
+    var data = {
       "orderId": OrderData.id,
       "finalTotal": MenuPrice.finalTotal.toStringAsFixed(2),
       "notes": OrderData.customerNotes,
@@ -123,8 +123,18 @@ class SubmitOrderLoadingPage extends StatelessWidget {
         "selectedDates": OrderData.selectedDates.toString(),
         "selectedMeals": OrderData.selectedMeals.toString()
       }
+    };
+    print(data);
+    await FirebaseFirestore.instance
+        .collection("orders")
+        .doc(OrderData.id)
+        .set(data)
+        .then((result) {
+      output = true;
+    }).catchError((err) {
+      throw Exception(err);
     });
-    return true;
+    return output;
   }
 
   @override

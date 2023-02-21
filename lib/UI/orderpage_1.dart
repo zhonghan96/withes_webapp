@@ -335,11 +335,9 @@ class _DatePickerState extends State<DatePicker> {
       const TextStyle(color: Colors.grey, fontWeight: FontWeight.w600);
 
   asyncInitState() async {
-    availableDates = [];
-
     await FirebaseFirestore.instance.collection("menu").get().then((snapshot) {
-      for (var i in snapshot.docs) {
-        availableDates.add(i.data()["date"].toDate());
+      for (var doc in snapshot.docs) {
+        availableDates.add(doc.data()["date"].toDate());
       }
     });
     return availableDates;
@@ -446,6 +444,7 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
+    print("Test 1");
     return FutureBuilder(
         future: asyncInitState(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -1128,6 +1127,7 @@ class ConfirmButton extends StatelessWidget {
       ),
       onPressed: () {
         String dataCheckResult = _orderDataCheck();
+        print(OrderData.addPostcode);
         if (dataCheckResult.isEmpty) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const SelectionPage()));

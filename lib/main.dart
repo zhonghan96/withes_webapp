@@ -9,6 +9,7 @@ import 'package:withes_webapp/Utility/config.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print('Firebase Apps Length: ${Firebase.apps.length}');
   runApp(const MyApp());
 }
 
