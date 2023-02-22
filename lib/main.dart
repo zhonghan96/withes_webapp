@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+import 'package:cloud_functions/cloud_functions.dart';
+
 import 'package:withes_webapp/UI/orderpage_1.dart';
 
 import 'package:withes_webapp/Utility/config.dart';
@@ -50,8 +52,20 @@ class MyHomePage extends StatelessWidget {
         child: const Icon(Icons.help, color: Colors.white),
         onPressed: () {
           helpDialog(context);
+          // callCloudFunction('ChIJ9SfZnH-yzTER6BcwzWeC0UA');
         },
       ),
     );
   }
 }
+
+// callCloudFunction(String input) async {
+//   try {
+//     final result =
+//         await FirebaseFunctions.instance.httpsCallable('getLatLng').call(input);
+//     print(result.data);
+//     print(result.data['lat']);
+//   } on FirebaseFunctionsException catch (error) {
+//     print("Error: ${error.message}");
+//   }
+// }

@@ -1,6 +1,7 @@
 const functions = require("firebase-functions");
 const {google} = require("googleapis");
 const serviceAccount = require("./serviceAccount.json");
+const axios = require("axios");
 
 exports.updateGoogleSheets = functions.firestore
     .document("orders/{orderId}")
@@ -47,3 +48,29 @@ exports.updateGoogleSheets = functions.firestore
       console.log("%d cells updated.", result.data.updatedCells);
       return result;
     });
+
+exports.locationAutofill = functions.https.onCall(async (data) => {
+  const googleAPIKey = serviceAccount.google_places_api_key;
+
+  const requestURL = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="+ data + "&key=" + googleAPIKey;
+
+  return await axios.default.get(requestURL).then((apiResponse) => {
+    return {predictions: apiResponse.data.predictions};
+  }).catch((error) => {
+    console.log(error);
+  });
+});
+
+exports.getLatLng = functions.https.onCall(async (placeId) => {
+  const googleAPIKey = serviceAccount.google_places_api_key;
+
+  const requestURL = "https://maps.googleapis.com/maps/api/place/details/json?placeid="+ placeId + "&key=" + googleAPIKey;
+
+  return await axios.default.get(requestURL).then((apiResponse) => {
+    return apiResponse.data.result.geometry.location;
+  }).catch((error) => {
+    console.log(error);
+  });
+});
+
+exports.testFunction = functions.https.onCall(() => {});

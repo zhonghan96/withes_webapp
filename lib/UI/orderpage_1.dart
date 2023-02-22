@@ -4,10 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter_number_picker/flutter_number_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:withes_webapp/UI/selectionpage.dart';
 
 import 'package:withes_webapp/Utility/config.dart';
+import 'package:withes_webapp/Utility/places_service.dart';
 
 class OrderPage1 extends StatefulWidget {
   const OrderPage1({super.key});
@@ -444,7 +446,6 @@ class _DatePickerState extends State<DatePicker> {
 
   @override
   Widget build(BuildContext context) {
-    print("Test 1");
     return FutureBuilder(
         future: asyncInitState(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -628,6 +629,65 @@ class _PhoneFieldState extends State<PhoneField> {
   }
 }
 
+class AddressSearch extends SearchDelegate {
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+          tooltip: 'Clear',
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            query = '';
+          })
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      tooltip: 'Back',
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return FutureBuilder(
+      future: query == '' ? null : PlaceAutocomplete().fetchSuggestions(query),
+      builder: (context, snapshot) => query == ''
+          ? Container(
+              padding: const EdgeInsets.all(16),
+              child: const Center(
+                  child: Text(
+                'Search for your address above',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              )),
+            )
+          : snapshot.hasData
+              ? ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) => ListTile(
+                      title: Text(snapshot.data![index].description),
+                      onTap: () {
+                        close(context, snapshot.data![index]);
+                      }))
+              : const Center(
+                  child: Text(
+                  'Loading Suggestions . . .',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                )),
+    );
+  }
+}
+
 class AddressField extends StatefulWidget {
   const AddressField({super.key});
 
@@ -636,60 +696,77 @@ class AddressField extends StatefulWidget {
 }
 
 class _AddressFieldState extends State<AddressField> {
-  String? dropdownvalue;
+  final _controller = TextEditingController();
+
+  late GoogleMapController mapController;
+  LatLng addressCoord = const LatLng(-31.93044189148321, 115.86103545527742);
+  final CameraPosition _kGoogle = const CameraPosition(
+      target: LatLng(-31.93044189148321, 115.86103545527742), zoom: 10);
+
+  final List<Marker> _markers = <Marker>[];
+
+  void _updateGMapsMarker() {
+    setState(() {
+      _markers.clear();
+      _markers.add(Marker(
+          markerId: MarkerId(OrderData.address), position: addressCoord));
+    });
+  }
+
+  void _updateCameraPosition() {
+    mapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: addressCoord, zoom: 15)));
+    mapController.setMapStyle('[]');
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        TextFormField(
+        TextField(
+          controller: _controller,
           decoration: const InputDecoration(
             filled: true,
             icon: Icon(Icons.home),
-            labelText: 'Address Line 1',
+            hintText: 'Enter your shipping address',
+            labelText: 'Address',
           ),
-          onChanged: (text) {
-            OrderData.addLine1 = text;
+          onTap: () async {
+            final result =
+                await showSearch(context: context, delegate: AddressSearch());
+            if (result != null) {
+              setState(() {
+                _controller.text = result.description;
+                OrderData.address = result.description;
+              });
+              addressCoord =
+                  await PlaceAutocomplete().getLatLng(result.placeId);
+              _updateGMapsMarker();
+              _updateCameraPosition();
+            }
           },
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 40),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              filled: true,
-              labelText: 'Suburb',
-            ),
-            onChanged: (text) {
-              OrderData.addSuburb = text;
-            },
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          height: 200,
+          child: GoogleMap(
+            mapType: MapType.normal,
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: _kGoogle,
+            markers: Set<Marker>.of(_markers),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 40),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              filled: true,
-              labelText: 'Postcode',
-            ),
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (text) {
-              OrderData.addPostcode = text;
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 40),
-          child: TextFormField(
-            decoration: const InputDecoration(
-              filled: true,
-              labelText: 'State',
-            ),
-            onChanged: (text) {
-              OrderData.addState = text;
-            },
-          ),
-        ),
+        )
       ],
     );
   }
@@ -1028,7 +1105,7 @@ class _NumOfSetsFieldState extends State<NumOfSetsField> {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      const Text('Number of Sets',
+      const Text('Number of Sets per Meal',
           style: TextStyle(
             fontSize: 18,
           )),

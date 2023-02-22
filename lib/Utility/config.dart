@@ -20,6 +20,9 @@ class OrderData {
   static String customerName = '';
   static String customerEmail = '';
   static String customerPhone = '';
+  static String address = '';
+  static String lat = '';
+  static String lng = '';
   static String addLine1 = '';
   static String addSuburb = '';
   static String addPostcode = '';

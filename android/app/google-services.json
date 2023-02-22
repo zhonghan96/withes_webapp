@@ -29,6 +29,13 @@
             {
               "client_id": "800751398617-cclgiddggk0ihc7612ivev0etdcpfi7s.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "800751398617-26aberhrg419gk4kc0tmukuchq218hm6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.withesWebapp"
+              }
             }
           ]
         }
