@@ -264,9 +264,10 @@ class CustomerInfo extends StatelessWidget {
                         const Text('Address: ',
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w600)),
-                        Text(
-                            '${OrderData.addLine1}, ${OrderData.addSuburb}, ${OrderData.addPostcode}, ${OrderData.addState}',
-                            style: const TextStyle(fontSize: 16)),
+                        Expanded(
+                          child: Text(OrderData.address,
+                              maxLines: 2, style: const TextStyle(fontSize: 16)),
+                        ),
                       ],
                     ),
                   ),

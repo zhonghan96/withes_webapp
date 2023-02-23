@@ -111,10 +111,8 @@ class SubmitOrderLoadingPage extends StatelessWidget {
         "phone": OrderData.customerPhone,
         "dietaryRequirements": OrderData.dietaryReq.toString(),
         "address": {
-          "line1": OrderData.addLine1,
-          "suburb": OrderData.addSuburb,
-          "postcode": OrderData.addPostcode,
-          "state": OrderData.addState
+          "fullAddress": OrderData.address,
+          "gmapsURL": OrderData.gmapsURL
         }
       },
       "orderInformation": {
@@ -124,7 +122,6 @@ class SubmitOrderLoadingPage extends StatelessWidget {
         "selectedMeals": OrderData.selectedMeals.toString()
       }
     };
-    print(data);
     await FirebaseFirestore.instance
         .collection("orders")
         .doc(OrderData.id)

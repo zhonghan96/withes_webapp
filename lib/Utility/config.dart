@@ -21,12 +21,7 @@ class OrderData {
   static String customerEmail = '';
   static String customerPhone = '';
   static String address = '';
-  static String lat = '';
-  static String lng = '';
-  static String addLine1 = '';
-  static String addSuburb = '';
-  static String addPostcode = '';
-  static String addState = '';
+  static String gmapsURL = '';
   static List dietaryReq = [];
   static List meals = [];
   static num numOfSets = 1;

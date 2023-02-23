@@ -1,5 +1,4 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:withes_webapp/Utility/config.dart';
 
@@ -38,10 +37,8 @@ class PlaceAutocomplete {
       final result = await FirebaseFunctions.instance
           .httpsCallable('getLatLng')
           .call(placeId);
-      print(result.data);
-      OrderData.lat = result.data['lat'].toString();
-      OrderData.lng = result.data['lng'].toString();
-      return LatLng(result.data['lat'], result.data['lng']);
+      OrderData.gmapsURL =
+          'https://www.google.com/maps/@${result.data['lat'].toString()},${result.data['lng'].toString()},20z';
     } on FirebaseFunctionsException catch (error) {
       print("Error: ${error.message}");
     }

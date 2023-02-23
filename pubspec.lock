@@ -77,26 +77,26 @@ packages:
     dependency: "direct main"
     description:
       name: cloud_functions
-      sha256: "2b96c69adfabd0c5c88b997c96ac7798fadd5e1ef5e440340edb793772aac10d"
+      sha256: "61f069bb8110f5cf04f23ba68a5cc4a6f2966716b17ff4d54462ce5a1ef889b5"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.10"
+    version: "4.0.11"
   cloud_functions_platform_interface:
     dependency: transitive
     description:
       name: cloud_functions_platform_interface
-      sha256: f02672abdaf372fd4a335a1695809d95d80a9e2a972d0c6887734d003f313fa9
+      sha256: ef99334b064e1137af8cf49a1e715068329a68ea0cb0869952975341760ef85d
       url: "https://pub.dev"
     source: hosted
-    version: "5.1.29"
+    version: "5.1.30"
   cloud_functions_web:
     dependency: "direct main"
     description:
       name: cloud_functions_web
-      sha256: f664fce1f2bc48c833c8949bbe507495ae9933c1552aa221edce1750b03d5a8f
+      sha256: c419268fd26a86d0f6ec4bc16c780a19b0e0b35087a33dc524f6e616525bcb0f
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.18"
+    version: "4.3.19"
   collection:
     dependency: transitive
     description:
@@ -105,14 +105,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.17.0"
-  csslib:
-    dependency: transitive
-    description:
-      name: csslib
-      sha256: b36c7f7e24c0bdf1bf9a3da461c837d1de64b9f8beb190c9011d8c72a3dfd745
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.17.2"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -133,10 +125,10 @@ packages:
     dependency: "direct main"
     description:
       name: firebase_core
-      sha256: "46b80acfb472d8abc500c2cb6ce65c4b5237d825e4c23bfc3efc70df9eec1a6e"
+      sha256: fe30ac230f12f8836bb97e6e09197340d3c584526825b1746ea362a82e1e43f7
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.1"
+    version: "2.7.0"
   firebase_core_platform_interface:
     dependency: transitive
     description:
@@ -174,14 +166,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
-  flutter_plugin_android_lifecycle:
-    dependency: transitive
-    description:
-      name: flutter_plugin_android_lifecycle
-      sha256: "60fc7b78455b94e6de2333d2f95196d32cf5c22f4b0b0520a628804cb463503b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.7"
   flutter_svg:
     dependency: transitive
     description:
@@ -200,62 +184,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  google_maps:
-    dependency: transitive
-    description:
-      name: google_maps
-      sha256: eb20a162d642599a05179e2d155b9e803899cb377764fdec9044fa7fa474bfb8
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.2.0"
-  google_maps_flutter:
-    dependency: "direct main"
-    description:
-      name: google_maps_flutter
-      sha256: "0c6b72b4b1e0f6204973e2b40868a75fe6380725d498f215cd7e35ed920d1c57"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.3"
-  google_maps_flutter_android:
-    dependency: transitive
-    description:
-      name: google_maps_flutter_android
-      sha256: "4152d1ddf6393cb7de73c406e1a4feba343f15f7b85494354ebee69730daee53"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.5"
-  google_maps_flutter_ios:
-    dependency: transitive
-    description:
-      name: google_maps_flutter_ios
-      sha256: "33bbca8d4148ed373251ea2ec2344fdc63009926b6d6be71a0854fd42409b1ba"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.13"
-  google_maps_flutter_platform_interface:
-    dependency: transitive
-    description:
-      name: google_maps_flutter_platform_interface
-      sha256: "0967430c25240836b794d42336bd4c61f0e78e9fd33d1365fa9316bb36b6b410"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.5"
-  google_maps_flutter_web:
-    dependency: "direct main"
-    description:
-      name: google_maps_flutter_web
-      sha256: a3c05ec5921885c38196f1bd264a445a698db34f1b5dcbc515add49803bf455d
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.0+5"
-  html:
-    dependency: transitive
-    description:
-      name: html
-      sha256: d9793e10dbe0e6c364f4c59bf3e01fb33a9b2a674bc7a1081693dba0614b6269
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.15.1"
   intl:
     dependency: "direct main"
     description:
@@ -272,14 +200,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.5"
-  js_wrapping:
-    dependency: transitive
-    description:
-      name: js_wrapping
-      sha256: e385980f7c76a8c1c9a560dfb623b890975841542471eade630b2871d243851c
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.4"
   lints:
     dependency: transitive
     description:
@@ -352,14 +272,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.3"
-  sanitize_html:
-    dependency: transitive
-    description:
-      name: sanitize_html
-      sha256: "0a445f19bbaa196f5a4f93461aa066b94e6e025622eb1e9bc77872a5e25233a5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -389,14 +301,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      sha256: "14a00e794c7c11aa145a170587321aedce29769c08d7f58b1d141da75e3b1c6f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:
@@ -439,4 +343,4 @@ packages:
     version: "5.4.1"
 sdks:
   dart: ">=2.18.5 <4.0.0"
-  flutter: ">=3.0.0"
+  flutter: ">=1.24.0-7.0"

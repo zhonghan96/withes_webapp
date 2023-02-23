@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter_number_picker/flutter_number_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:withes_webapp/UI/selectionpage.dart';
 
@@ -679,10 +678,18 @@ class AddressSearch extends SearchDelegate {
                       onTap: () {
                         close(context, snapshot.data![index]);
                       }))
-              : const Center(
-                  child: Text(
-                  'Loading Suggestions . . .',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              : Center(
+                  child: Column(
+                  children: const [
+                    SizedBox(height: 100),
+                    CircularProgressIndicator(),
+                    SizedBox(height: 20),
+                    Text(
+                      'Loading Suggestions . . .',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                    ),
+                  ],
                 )),
     );
   }
@@ -697,31 +704,6 @@ class AddressField extends StatefulWidget {
 
 class _AddressFieldState extends State<AddressField> {
   final _controller = TextEditingController();
-
-  late GoogleMapController mapController;
-  LatLng addressCoord = const LatLng(-31.93044189148321, 115.86103545527742);
-  final CameraPosition _kGoogle = const CameraPosition(
-      target: LatLng(-31.93044189148321, 115.86103545527742), zoom: 10);
-
-  final List<Marker> _markers = <Marker>[];
-
-  void _updateGMapsMarker() {
-    setState(() {
-      _markers.clear();
-      _markers.add(Marker(
-          markerId: MarkerId(OrderData.address), position: addressCoord));
-    });
-  }
-
-  void _updateCameraPosition() {
-    mapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: addressCoord, zoom: 15)));
-    mapController.setMapStyle('[]');
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
 
   @override
   void dispose() {
@@ -749,24 +731,10 @@ class _AddressFieldState extends State<AddressField> {
                 _controller.text = result.description;
                 OrderData.address = result.description;
               });
-              addressCoord =
-                  await PlaceAutocomplete().getLatLng(result.placeId);
-              _updateGMapsMarker();
-              _updateCameraPosition();
+              await PlaceAutocomplete().getLatLng(result.placeId);
             }
           },
         ),
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          height: 200,
-          child: GoogleMap(
-            mapType: MapType.normal,
-            onMapCreated: _onMapCreated,
-            initialCameraPosition: _kGoogle,
-            markers: Set<Marker>.of(_markers),
-          ),
-        )
       ],
     );
   }
@@ -1154,10 +1122,7 @@ class ConfirmButton extends StatelessWidget {
       errorMessage += 'Please input your contact number.\n';
     }
 
-    if (OrderData.addLine1.isEmpty ||
-        OrderData.addSuburb.isEmpty ||
-        OrderData.addPostcode.isEmpty ||
-        OrderData.addState.isEmpty) {
+    if (OrderData.address.isEmpty) {
       errorMessage += 'Please input your delivery address.\n';
     }
 
@@ -1204,7 +1169,6 @@ class ConfirmButton extends StatelessWidget {
       ),
       onPressed: () {
         String dataCheckResult = _orderDataCheck();
-        print(OrderData.addPostcode);
         if (dataCheckResult.isEmpty) {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const SelectionPage()));
