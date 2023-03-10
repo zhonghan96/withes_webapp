@@ -1,7 +1,7 @@
 const functions = require("firebase-functions");
 const {google} = require("googleapis");
-const serviceAccount = require("./serviceAccount.json");
 const axios = require("axios");
+const stripe = require("stripe")(functions.config().stripe.token);
 
 exports.updateGoogleSheets = functions.firestore
     .document("orders/{orderId}")
@@ -9,8 +9,8 @@ exports.updateGoogleSheets = functions.firestore
       const data = snap.data();
 
       const jwtClient = new google.auth.JWT({
-        email: serviceAccount.client_email,
-        key: serviceAccount.private_key,
+        email: functions.config().gsheets.email,
+        key: functions.config().gsheets.token,
         scopes: "https://www.googleapis.com/auth/spreadsheets",
       });
 
@@ -36,8 +36,8 @@ exports.updateGoogleSheets = functions.firestore
       ]];
 
       const result = await service.spreadsheets.values.append({
-        spreadsheetId: "1lylaM1zQdOtgBCnXGSHP-9Esdxd7_tBVcL6t1uofIW8",
-        range: "Order Information!A3:P",
+        spreadsheetId: functions.config().gsheets.spreadsheetid,
+        range: functions.config().gsheets.sheetrange,
         valueInputOption: "RAW",
         requestBody: {
           values,
@@ -48,7 +48,7 @@ exports.updateGoogleSheets = functions.firestore
     });
 
 exports.locationAutofill = functions.https.onCall(async (data) => {
-  const googleAPIKey = serviceAccount.google_places_api_key;
+  const googleAPIKey = functions.config().gplaces.token;
 
   const requestURL = "https://maps.googleapis.com/maps/api/place/autocomplete/json?input="+ data + "&key=" + googleAPIKey;
 
@@ -60,7 +60,7 @@ exports.locationAutofill = functions.https.onCall(async (data) => {
 });
 
 exports.getLatLng = functions.https.onCall(async (placeId) => {
-  const googleAPIKey = serviceAccount.google_places_api_key;
+  const googleAPIKey = functions.config().gplaces.token;
 
   const requestURL = "https://maps.googleapis.com/maps/api/place/details/json?placeid="+ placeId + "&key=" + googleAPIKey;
 
@@ -69,6 +69,28 @@ exports.getLatLng = functions.https.onCall(async (placeId) => {
   }).catch((error) => {
     console.log(error);
   });
+});
+
+exports.stripePayment = functions.https.onCall(async (data) => {
+  const createPaymentMethod = await stripe.paymentMethods.create({
+    type: "card",
+    card: data.card,
+  });
+
+  const createPaymentIntent = await stripe.paymentIntents.create({
+    amount: data.amount,
+    currency: "aud",
+    payment_method_types: ["card"],
+    description: `Payment for order ${data.orderId}`,
+  });
+
+  const confirmPaymentIntent = await stripe.paymentIntents.confirm(
+      createPaymentIntent.id,
+      {payment_method: createPaymentMethod.id,
+        receipt_email: data.receipt_email},
+  );
+
+  return confirmPaymentIntent.status;
 });
 
 exports.testFunction = functions.https.onCall(() => {});

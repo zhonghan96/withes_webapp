@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_credit_card/flutter_credit_card.dart';
 
 import 'package:withes_webapp/UI/submitorderloading.dart';
 import 'package:withes_webapp/Utility/config.dart';
@@ -266,7 +267,8 @@ class CustomerInfo extends StatelessWidget {
                                 fontSize: 16, fontWeight: FontWeight.w600)),
                         Expanded(
                           child: Text(OrderData.address,
-                              maxLines: 2, style: const TextStyle(fontSize: 16)),
+                              maxLines: 2,
+                              style: const TextStyle(fontSize: 16)),
                         ),
                       ],
                     ),
@@ -594,6 +596,18 @@ class PaymentWidget extends StatelessWidget {
               child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(
+                  "Enter your credit card details here",
+                  style: appTheme.textTheme.headlineSmall,
+                ),
+              ),
+            ),
+            const CreditCardField(),
+            Container(
+              padding: const EdgeInsets.only(top: 12, left: 20, bottom: 15),
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
                   "Any final notes for us about your order?",
                   style: appTheme.textTheme.headlineSmall,
                 ),
@@ -629,5 +643,132 @@ class PaymentWidget extends StatelessWidget {
             )
           ],
         ));
+  }
+}
+
+class CreditCardField extends StatefulWidget {
+  const CreditCardField({super.key});
+
+  @override
+  State<CreditCardField> createState() => _CreditCardFieldState();
+}
+
+class _CreditCardFieldState extends State<CreditCardField> {
+  OutlineInputBorder? border = OutlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey.withOpacity(0.7), width: 2));
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  void onCreditCardModelChange(CreditCardModel? creditCardModel) {
+    setState(() {
+      OrderData.cardNumber = creditCardModel!.cardNumber;
+      OrderData.expiryDate = creditCardModel.expiryDate;
+      OrderData.cardHolderName = creditCardModel.cardHolderName;
+      OrderData.cvvCode = creditCardModel.cvvCode;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CreditCardForm(
+      formKey: formKey,
+      cardNumber: OrderData.cardNumber,
+      obscureNumber: true,
+      cvvCode: OrderData.cvvCode,
+      obscureCvv: true,
+      expiryDate: OrderData.expiryDate,
+      cardHolderName: OrderData.cardHolderName,
+      onCreditCardModelChange: onCreditCardModelChange,
+      themeColor: const Color(0xFF037FF3),
+      cardNumberDecoration: InputDecoration(
+        labelText: 'Number',
+        hintText: 'XXXX XXXX XXXX XXXX',
+        focusedBorder: border,
+        enabledBorder: border,
+      ),
+      expiryDateDecoration: InputDecoration(
+        focusedBorder: border,
+        enabledBorder: border,
+        labelText: 'Expired Date',
+        hintText: 'XX/XX',
+      ),
+      cvvCodeDecoration: InputDecoration(
+        focusedBorder: border,
+        enabledBorder: border,
+        labelText: 'CVV',
+        hintText: 'XXX',
+      ),
+      cardHolderDecoration: InputDecoration(
+        focusedBorder: border,
+        enabledBorder: border,
+        labelText: 'Card Holder',
+      ),
+    );
+  }
+}
+
+//    _____             __ _
+//   / ____|           / _(_)
+//  | |     ___  _ __ | |_ _ _ __ _ __ ___
+//  | |    / _ \| '_ \|  _| | '__| '_ ` _ \
+//  | |___| (_) | | | | | | | |  | | | | | |
+//   \_____\___/|_| |_|_| |_|_|  |_| |_| |_|
+
+class ConfirmButton extends StatelessWidget {
+  const ConfirmButton({super.key});
+
+  _orderDataCheck() {
+    String errorMessage = '';
+
+    if (OrderData.cardNumber.length < 19 ||
+        OrderData.expiryDate.length < 5 ||
+        OrderData.cvvCode.length < 3 ||
+        OrderData.cardHolderName.isEmpty) {
+      errorMessage += 'Please review your credit card information';
+    }
+    return errorMessage;
+  }
+
+  _errorDialog(BuildContext context, text) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: Text(
+              text,
+              style: const TextStyle(height: 1.5),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: Navigator.of(context).pop, child: const Text('OK'))
+            ],
+          );
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.all(15),
+          elevation: 5,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(25)))),
+      child: const Text(
+        'Select your meals',
+        style: TextStyle(fontSize: 16),
+      ),
+      onPressed: () {
+        String dataCheckResult = _orderDataCheck();
+        if (dataCheckResult.isEmpty) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SubmitOrderLoadingPage()));
+        } else {
+          _errorDialog(context, dataCheckResult);
+        }
+      },
+    );
   }
 }

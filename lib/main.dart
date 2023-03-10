@@ -52,19 +52,29 @@ class MyHomePage extends StatelessWidget {
         child: const Icon(Icons.help, color: Colors.white),
         onPressed: () {
           helpDialog(context);
-          // callCloudFunction('ChIJ9SfZnH-yzTER6BcwzWeC0UA');
+          // callCloudFunction({
+          //   'amount': MenuPrice.finalTotal,
+          //   'orderId': OrderData.id,
+          //   'receipt_email': OrderData.customerEmail,
+          //   'card': {
+          //     'number': '4242424242424242',
+          //     'exp_month': 8,
+          //     'exp_year': 2024,
+          //     'cvc': '314',
+          //   }            
+          // });
         },
       ),
     );
   }
 }
 
-// callCloudFunction(String input) async {
+// callCloudFunction(input) async {
 //   try {
-//     final result =
-//         await FirebaseFunctions.instance.httpsCallable('getLatLng').call(input);
+//     final result = await FirebaseFunctions.instance
+//         .httpsCallable('stripePayment')
+//         .call(input);
 //     print(result.data);
-//     print(result.data['lat']);
 //   } on FirebaseFunctionsException catch (error) {
 //     print("Error: ${error.message}");
 //   }

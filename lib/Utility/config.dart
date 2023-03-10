@@ -28,6 +28,10 @@ class OrderData {
   static List selectedDates = [];
   static List selectedMeals = [];
   static String customerNotes = '';
+  static String cardNumber = '';
+  static String expiryDate = '';
+  static String cardHolderName = '';
+  static String cvvCode = '';
 }
 
 class MenuPrice {

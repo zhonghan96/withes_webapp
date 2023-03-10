@@ -47,4 +47,3 @@ app.*.map.json
 .env
 
 #API Keys, not to be pushed
-/functions/serviceAccount.json

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 import 'package:withes_webapp/UI/submitordersuccess.dart';
 import 'package:withes_webapp/UI/submitorderfail.dart';
@@ -87,16 +88,39 @@ class SubmitOrderLoadingPage extends StatelessWidget {
   }
 
   Future<void> executeAfterBuild(context) async {
-    bool submitOrder = await addToFireStore();
-    Future.delayed(const Duration(seconds: 3), () {
+    String stripePayment = await submitStripePayment({
+      'amount': MenuPrice.finalTotal,
+      'orderId': OrderData.id,
+      'receipt_email': OrderData.customerEmail,
+      'card': {
+        'number': OrderData.cardNumber,
+        'exp_month': int.parse(OrderData.expiryDate.substring(0, 2)),
+        'exp_year': 2000 + int.parse(OrderData.expiryDate.substring(3)),
+        'cvc': OrderData.cvvCode,
+      }
+    });
+    if (stripePayment == 'succeeded') {
+      bool submitOrder = await addToFireStore();
       if (submitOrder) {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => const OrderSuccessPage()));
       } else {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const OrderFailPage()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const OrderFailPage(
+                    errorMessage:
+                        'There seems to be some issues in submitting your order')));
       }
-    });
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const OrderFailPage(
+                    errorMessage:
+                        'There seems to be some issues in charging your card',
+                  )));
+    }
   }
 
   Future<bool> addToFireStore() async {
@@ -131,6 +155,19 @@ class SubmitOrderLoadingPage extends StatelessWidget {
     }).catchError((err) {
       throw Exception(err);
     });
+    return output;
+  }
+
+  Future<String> submitStripePayment(input) async {
+    String output = '';
+    try {
+      final result = await FirebaseFunctions.instance
+          .httpsCallable('stripePayment')
+          .call(input);
+      output = result.data;
+    } on FirebaseFunctionsException catch (error) {
+      print("Error: ${error.message}");
+    }
     return output;
   }
 

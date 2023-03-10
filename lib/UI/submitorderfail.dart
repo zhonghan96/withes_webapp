@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:withes_webapp/Utility/config.dart';
 
 class OrderFailPage extends StatelessWidget {
-  const OrderFailPage({super.key});
+  final String errorMessage = '';
+  const OrderFailPage({super.key, required errorMessage});
 
   orderProgressIndicator() {
     return Padding(
@@ -121,11 +122,10 @@ class OrderFailPage extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 60, fontWeight: FontWeight.bold),
                         ),
-                        const FittedBox(
+                        FittedBox(
                             fit: BoxFit.fitWidth,
-                            child: Text(
-                                'There seems to be some issues in submitting your order',
-                                style: TextStyle(fontSize: 18, height: 1.5))),
+                            child: Text(errorMessage,
+                                style: const TextStyle(fontSize: 18, height: 1.5))),
                         const FittedBox(
                             child: Text(
                                 'Please try again later, or submit a help ticket with us',
